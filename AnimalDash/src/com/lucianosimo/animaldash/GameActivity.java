@@ -33,8 +33,8 @@ public class GameActivity extends BaseGameActivity {
 	
 	@Override
 	public EngineOptions onCreateEngineOptions() {
-		camera = new BoundCamera(0, 0, 1280, 720);
-		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new FillResolutionPolicy(), this.camera);
+		camera = new BoundCamera(0, 0, 720, 1280);
+		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new FillResolutionPolicy(), this.camera);
 		engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
 		engineOptions.getRenderOptions().setDithering(true);
 		engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
@@ -102,7 +102,7 @@ public class GameActivity extends BaseGameActivity {
 			@Override
 			public void onTimePassed(TimerHandler pTimerHandler) {
 				mEngine.unregisterUpdateHandler(pTimerHandler);
-				SceneManager.getInstance().createMenuScene();
+				SceneManager.getInstance().createGameScene();
 			}
 		}));
 		pOnPopulateSceneCallback.onPopulateSceneFinished();

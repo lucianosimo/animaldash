@@ -29,47 +29,33 @@ public class ResourcesManager {
 	//Splash items
 	public ITextureRegion splash_region;
 	private BitmapTextureAtlas splashTextureAtlas;
-	
-	//Menu fonts
-	
-	//Menu audio
-	
-	//Menu items
-	public ITextureRegion loading_background_region;
-	public ITextureRegion menu_background_region;
-	public ITextureRegion menu_play_button_region;
-
-	private BuildableBitmapTextureAtlas loadingBackgroundTextureAtlas;
-	private BuildableBitmapTextureAtlas menuTextureAtlas;
-	private BuildableBitmapTextureAtlas menuBackgroundTextureAtlas;
-	
-	
+		
 	//Game audio
 	
 	//Game fonts
 	
 	//Game HUD
 	
-	//Objects
+	//Players
 	public ITextureRegion game_player_region;
-	public ITextureRegion game_cube_1_region;
-	public ITextureRegion game_cube_2_region;
+	public ITextureRegion game_enemy_region;
 	
 	//Platforms
+	public ITextureRegion game_platform_region;
 	
 	//Backgrounds
 	public ITextureRegion game_background_region;
 	
 	//Animated
 	
-	//Countdown
-	
 	//Windows
 
 	//Buttons
-	
-	//Score tiles;
-	
+	public ITextureRegion game_button_1_region;
+	public ITextureRegion game_button_2_region;
+	public ITextureRegion game_button_square_region;
+	public ITextureRegion game_button_triangle_region;
+
 	//Game Textures
 	private BuildableBitmapTextureAtlas gameTextureAtlas;
 	private BuildableBitmapTextureAtlas gameBackgroundTextureAtlas;
@@ -77,7 +63,7 @@ public class ResourcesManager {
 	//Splash Methods
 	public void loadSplashScreen() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-		splashTextureAtlas = new BitmapTextureAtlas(activity.getTextureManager(), 1280, 720, TextureOptions.BILINEAR);
+		splashTextureAtlas = new BitmapTextureAtlas(activity.getTextureManager(), 720, 1280, TextureOptions.BILINEAR);
 		splash_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(splashTextureAtlas, activity, "splash.png", 0, 0);
 		splashTextureAtlas.load();
 	}
@@ -85,62 +71,6 @@ public class ResourcesManager {
 	public void unloadSplashScreen() {
 		splashTextureAtlas.unload();
 		splash_region = null;
-	}
-	
-	//Menu methods
-	public void loadMenuResources() {
-		loadMenuGraphics();
-		loadMenuFonts();
-		loadMenuAudio();		
-	}
-	
-	public void unloadMenuResources() {
-		unloadMenuTextures();
-		unloadMenuFonts();
-		unloadMenuAudio();
-	}
-	
-	private void loadMenuGraphics() {
-		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
-		menuTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1000, 1000, TextureOptions.BILINEAR);
-		menuBackgroundTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1280, 720, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		loadingBackgroundTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1280, 720, TextureOptions.BILINEAR);
-		
-		loading_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(loadingBackgroundTextureAtlas, activity, "loading_background.png");
-		menu_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuBackgroundTextureAtlas, activity, "menu_background.png");
-		menu_play_button_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "menu_play_button.png");
-		
-		try {
-			this.menuTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-			this.menuBackgroundTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-			this.loadingBackgroundTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-			this.menuTextureAtlas.load();
-			this.loadingBackgroundTextureAtlas.load();
-			this.menuBackgroundTextureAtlas.load();
-		} catch (final TextureAtlasBuilderException e) {
-			org.andengine.util.debug.Debug.e(e);
-		}
-	}
-	
-	private void loadMenuFonts() {
-		FontFactory.setAssetBasePath("fonts/menu/");
-	}
-	
-	private void loadMenuAudio() {
-		MusicFactory.setAssetBasePath("music/menu/");
-	}
-	
-	private void unloadMenuTextures() {
-		this.menuTextureAtlas.unload();
-		this.menuBackgroundTextureAtlas.unload();
-	}
-	
-	private void unloadMenuFonts() {
-		
-	}
-	
-	private void unloadMenuAudio() {
-		System.gc();
 	}
 	
 	//Game Methods
@@ -160,13 +90,18 @@ public class ResourcesManager {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
 		
 		gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1000, 1000, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		gameBackgroundTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1280, 720, TextureOptions.BILINEAR);
+		gameBackgroundTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 720, 1280, TextureOptions.BILINEAR);
 		
 		game_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameBackgroundTextureAtlas, activity, "game_background.png");
 		
+		game_platform_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_platform.png");
 		game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player.png");
-		game_cube_1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_cube_1.png");
-		game_cube_2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_cube_2.png");
+		game_enemy_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy.png");
+		
+		game_button_1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_1.png");
+		game_button_2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_2.png");
+		game_button_square_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_square.png");
+		game_button_triangle_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_triangle.png");
 		
 		try {
 			this.gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));

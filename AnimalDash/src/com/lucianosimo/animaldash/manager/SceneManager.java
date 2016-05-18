@@ -7,15 +7,11 @@ import org.andengine.ui.IGameInterface.OnCreateSceneCallback;
 
 import com.lucianosimo.animaldash.base.BaseScene;
 import com.lucianosimo.animaldash.scene.GameScene;
-import com.lucianosimo.animaldash.scene.LoadingScene;
-import com.lucianosimo.animaldash.scene.MainMenuScene;
 import com.lucianosimo.animaldash.scene.SplashScene;
 
 public class SceneManager {
 
 	private BaseScene splashScene;
-	private BaseScene menuScene;
-	private BaseScene loadingScene;
 	private BaseScene gameScene;
 	
 	private static final SceneManager INSTANCE = new SceneManager();
@@ -25,8 +21,6 @@ public class SceneManager {
 	
 	public enum SceneType {
 		SCENE_SPLASH,
-		SCENE_MENU,
-		SCENE_LOADING,
 		SCENE_GAME,
 	}
 	
@@ -41,14 +35,8 @@ public class SceneManager {
 			case SCENE_SPLASH:
 				setScene(splashScene);
 				break;
-			case SCENE_MENU:
-				setScene(menuScene);
-				break;
 			case SCENE_GAME:
 				setScene(gameScene);
-				break;
-			case SCENE_LOADING:
-				setScene(loadingScene);
 				break;
 			default:
 				break;
@@ -80,53 +68,15 @@ public class SceneManager {
 		splashScene = null;
 	}
 	
-	public void createMenuScene() {
-		ResourcesManager.getInstance().loadMenuResources();
-		menuScene = new MainMenuScene();
-		loadingScene = new LoadingScene();
-		setScene(menuScene);
+	public void createGameScene() {
 		disposeSplashScene();
-	}
-	
-	public void loadGameScene(final Engine mEngine, final BaseScene scene) {
-		setScene(loadingScene);
-		scene.disposeScene();
-		switch (scene.getSceneType()) {
-			case SCENE_GAME:
-				ResourcesManager.getInstance().unloadGameResources();
-				break;
-			default:
-				break;
-		}
-		mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+		engine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
 			@Override
 			public void onTimePassed(final TimerHandler pTimerHandler) {
-				mEngine.unregisterUpdateHandler(pTimerHandler);
+				engine.unregisterUpdateHandler(pTimerHandler);
 				ResourcesManager.getInstance().loadGameResources();
 				gameScene = new GameScene();
 				setScene(gameScene);
-			}
-		}));
-	}
-	
-	public void loadMenuScene(final Engine mEngine, final BaseScene scene) {
-		setScene(loadingScene);
-		scene.disposeScene();
-		switch (scene.getSceneType()) {
-			case SCENE_GAME:
-				ResourcesManager.getInstance().unloadGameResources();
-				break;
-			default:
-				break;
-		}
-		mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
-			
-			@Override
-			public void onTimePassed(final TimerHandler pTimerHandler) {
-				mEngine.unregisterUpdateHandler(pTimerHandler);
-				ResourcesManager.getInstance().loadMenuResources();
-				menuScene = new MainMenuScene();
-				setScene(menuScene);
 			}
 		}));
 	}
