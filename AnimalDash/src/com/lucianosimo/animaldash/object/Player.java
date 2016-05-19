@@ -51,9 +51,9 @@ public abstract class Player extends Sprite{
 		return body;
 	}
 	
-	public void jump() {
-		body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 20));
-		body.setAngularVelocity(2);
-		this.registerEntityModifier(new LoopEntityModifier(new RotationModifier(4, 0, 2 * 180)));
+	public void jump(int jumpFactor) {
+		body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, jumpFactor * 10));
+		//body.setAngularVelocity(2);
+		this.registerEntityModifier(new RotationModifier(jumpFactor, 0, jumpFactor * 180));
 	}
 }

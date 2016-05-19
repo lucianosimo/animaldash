@@ -22,6 +22,10 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.lucianosimo.animaldash.base.BaseScene;
 import com.lucianosimo.animaldash.manager.SceneManager.SceneType;
+import com.lucianosimo.animaldash.object.Enemy1;
+import com.lucianosimo.animaldash.object.Enemy2;
+import com.lucianosimo.animaldash.object.Enemy3;
+import com.lucianosimo.animaldash.object.Enemy4;
 import com.lucianosimo.animaldash.object.Platform;
 import com.lucianosimo.animaldash.object.Player;
 
@@ -41,6 +45,10 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	
 	//Instances
 	private Player player;
+	private Enemy1 enemy1;
+	private Enemy2 enemy2;
+	private Enemy3 enemy3;
+	private Enemy4 enemy4;
 	
 	//Booleans
 
@@ -51,8 +59,10 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	//Buttons
 	private Sprite button1;
 	private Sprite button2;
-	private Sprite buttonSquare;
-	private Sprite buttonTriangle;
+	private Sprite button3;
+	private Sprite button4;
+	//private Sprite buttonSquare;
+	//private Sprite buttonTriangle;
 	
 	//Rectangles
 	
@@ -68,6 +78,8 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	private final static int PLATFORM_WIDTH = 128;
 	private final static int PLATFORM_HEIGHT = 128;
 	
+	private final static int DISTANCE_ENABLING_BUTTON = 400;
+	
 	//If negative, never collides between groups, if positive yes
 	//private static final int GROUP_ENEMY = -1;
 
@@ -79,6 +91,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		createPhysics();
 		createPlatform();
 		createPlayer();
+		createEnemies();
 		createHUD();
 		setCameraProperties();
 		//DebugRenderer debug = new DebugRenderer(physicsWorld, vbom);
@@ -118,30 +131,73 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		GameScene.this.attachChild(player);
 	}
 	
+	private void createEnemies() {
+		enemy1 = new Enemy1(1500,  screenHeight/2, vbom, physicsWorld);
+		enemy2 = new Enemy2(3000,  screenHeight/2, vbom, physicsWorld);
+		enemy3 = new Enemy3(4500,  screenHeight/2, vbom, physicsWorld);
+		enemy4 = new Enemy4(6000,  screenHeight/2, vbom, physicsWorld);
+		
+		GameScene.this.attachChild(enemy1);
+		GameScene.this.attachChild(enemy2);
+		GameScene.this.attachChild(enemy3);
+		GameScene.this.attachChild(enemy4);
+	}
+	
 	private void createHUD() {
 		gameHud = new HUD();
 		
-		button1 = new Sprite(screenWidth/2 - 200, screenHeight/2 - 250, resourcesManager.game_button_1_region, vbom){
+		button1 = new Sprite(screenWidth/2 - 200, screenHeight/2 - 250, resourcesManager.game_button_1_region, vbom) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
-				if (pSceneTouchEvent.isActionDown()) {
-					player.jump();
+				if (pSceneTouchEvent.isActionDown() && enableButton(enemy1.getX(), player.getX())) {
+					player.jump(1);
 				}
 				return false;
 			}
 		};
-		button2 = new Sprite(screenWidth/2 - 200, screenHeight/2 - 500, resourcesManager.game_button_2_region, vbom);
-		buttonSquare = new Sprite(screenWidth/2 + 200, screenHeight/2 - 250, resourcesManager.game_button_square_region, vbom);
-		buttonTriangle = new Sprite(screenWidth/2 + 200, screenHeight/2 - 500, resourcesManager.game_button_triangle_region, vbom);
+		button2 = new Sprite(screenWidth/2 - 200, screenHeight/2 - 500, resourcesManager.game_button_2_region, vbom) {
+			@Override
+			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
+				if (pSceneTouchEvent.isActionDown() && enableButton(enemy2.getX(), player.getX())) {
+					player.jump(2);
+				}
+				return false;
+			}
+		};
+		button3 = new Sprite(screenWidth/2 + 200, screenHeight/2 - 250, resourcesManager.game_button_3_region, vbom) {
+			@Override
+			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
+				if (pSceneTouchEvent.isActionDown() && enableButton(enemy3.getX(), player.getX())) {
+					player.jump(3);
+				}
+				return false;
+			}
+		};
+		button4 = new Sprite(screenWidth/2 + 200, screenHeight/2 - 500, resourcesManager.game_button_4_region, vbom) {
+			@Override
+			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
+				if (pSceneTouchEvent.isActionDown() && enableButton(enemy4.getX(), player.getX())) {
+					player.jump(4);
+				}
+				return false;
+			}
+		};
 		
 		gameHud.attachChild(button1);
 		gameHud.attachChild(button2);
-		gameHud.attachChild(buttonSquare);
-		gameHud.attachChild(buttonTriangle);
+		gameHud.attachChild(button3);
+		gameHud.attachChild(button4);
 		
 		gameHud.registerTouchArea(button1);
+		gameHud.registerTouchArea(button2);
+		gameHud.registerTouchArea(button3);
+		gameHud.registerTouchArea(button4);
 		
 		camera.setHUD(gameHud);
+	}
+	
+	private boolean enableButton(float enemyX, float playerX) {
+		return (enemyX - playerX < DISTANCE_ENABLING_BUTTON) && (enemyX - playerX > 0);
 	}
 	
 	private void setCameraProperties() {

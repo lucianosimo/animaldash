@@ -38,7 +38,10 @@ public class ResourcesManager {
 	
 	//Players
 	public ITextureRegion game_player_region;
-	public ITextureRegion game_enemy_region;
+	public ITextureRegion game_enemy_1_region;
+	public ITextureRegion game_enemy_2_region;
+	public ITextureRegion game_enemy_3_region;
+	public ITextureRegion game_enemy_4_region;
 	
 	//Platforms
 	public ITextureRegion game_platform_region;
@@ -53,8 +56,12 @@ public class ResourcesManager {
 	//Buttons
 	public ITextureRegion game_button_1_region;
 	public ITextureRegion game_button_2_region;
+	public ITextureRegion game_button_3_region;
+	public ITextureRegion game_button_4_region;
 	public ITextureRegion game_button_square_region;
 	public ITextureRegion game_button_triangle_region;
+	public ITextureRegion game_button_circle_region;
+	public ITextureRegion game_button_rectangle_region;
 
 	//Game Textures
 	private BuildableBitmapTextureAtlas gameTextureAtlas;
@@ -96,12 +103,19 @@ public class ResourcesManager {
 		
 		game_platform_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_platform.png");
 		game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player.png");
-		game_enemy_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy.png");
+		game_enemy_1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_1.png");
+		game_enemy_2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_2.png");
+		game_enemy_3_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_3.png");
+		game_enemy_4_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_4.png");
 		
 		game_button_1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_1.png");
 		game_button_2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_2.png");
+		game_button_3_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_3.png");
+		game_button_4_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_4.png");
 		game_button_square_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_square.png");
 		game_button_triangle_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_triangle.png");
+		game_button_circle_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_circle.png");
+		game_button_rectangle_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_rectangle.png");
 		
 		try {
 			this.gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
