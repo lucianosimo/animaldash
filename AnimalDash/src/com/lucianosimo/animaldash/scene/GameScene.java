@@ -129,6 +129,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		};
 		
 		GameScene.this.attachChild(player);
+		GameScene.this.attachChild(player.getCameraChaseRectangle());
 	}
 	
 	private void createEnemies() {

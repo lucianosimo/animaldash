@@ -1,8 +1,8 @@
 package com.lucianosimo.animaldash.object;
 
 import org.andengine.engine.camera.Camera;
-import org.andengine.entity.modifier.LoopEntityModifier;
 import org.andengine.entity.modifier.RotationModifier;
+import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
@@ -17,43 +17,79 @@ import com.lucianosimo.animaldash.manager.ResourcesManager;
 
 public abstract class Player extends Sprite{
 
-	private Body body;
-	private FixtureDef fixture;
+	private final static int PLAYER_INITIAL_SPEED = 5;
+	private final static int CAMERA_CHASE_RECTANGLE_WIDTH = 1;
+	private final static int CAMERA_CHASE_RECTANGLE_HEIGHT = 1;
+	private final static int CAMERA_CHASE_PLAYER_DISTANCE = 250;
+	
+	private Body playerBody;
+	private FixtureDef playerFixture;
+	
+	private Body cameraChaseBody;
+	private FixtureDef cameraChaseFixture;
+	private Rectangle cameraChaseRectangle;
 	
 	public abstract void onDie();
 	
 	public Player(float pX, float pY, VertexBufferObjectManager vbom, Camera camera, PhysicsWorld physicsWorld) {
 		super(pX, pY, ResourcesManager.getInstance().game_player_region, vbom);
-		createPhysics(camera, physicsWorld);
-		camera.setChaseEntity(this);
+		
+		createPlayerPhysics(physicsWorld);
+		createCameraChaseRectanglePhysics(pX, pY, camera, physicsWorld, vbom);
+		
+		camera.setChaseEntity(cameraChaseRectangle);
 	}
 	
-	private void createPhysics(final Camera camera, PhysicsWorld physicsWorld) {
-		fixture = PhysicsFactory.createFixtureDef(0, 0, 0);
-		body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.DynamicBody, fixture);
+	private void createPlayerPhysics(PhysicsWorld physicsWorld) {
+		playerFixture = PhysicsFactory.createFixtureDef(0, 0, 0);
+		playerBody = PhysicsFactory.createCircleBody(physicsWorld, this, BodyType.DynamicBody, playerFixture);
 		
 		this.setUserData("player");
-		body.setUserData("player");
+		playerBody.setUserData("player");
 		
-		body.setFixedRotation(true);
+		playerBody.setFixedRotation(true);
 		
-		physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, body, true, false) {
+		physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, playerBody, true, false) {
+			@Override
+			public void onUpdate(float pSecondsElapsed) {
+				super.onUpdate(pSecondsElapsed);
+				playerBody.setLinearVelocity(PLAYER_INITIAL_SPEED, playerBody.getLinearVelocity().y);
+			}
+		});
+	}
+	
+	private void createCameraChaseRectanglePhysics(float pX, float pY, final Camera camera, PhysicsWorld physicsWorld, VertexBufferObjectManager vbom) {
+		cameraChaseRectangle = new Rectangle(pX + CAMERA_CHASE_PLAYER_DISTANCE, pY, CAMERA_CHASE_RECTANGLE_WIDTH, CAMERA_CHASE_RECTANGLE_HEIGHT, vbom);
+		
+		cameraChaseFixture = PhysicsFactory.createFixtureDef(0, 0, 0);
+		cameraChaseFixture.filter.groupIndex = -1;
+		
+		cameraChaseBody = PhysicsFactory.createCircleBody(physicsWorld, cameraChaseRectangle, BodyType.DynamicBody, cameraChaseFixture);
+		
+		cameraChaseRectangle.setUserData("cameraChaseRectangle");
+		cameraChaseBody.setUserData("cameraChaseRectangle");
+		cameraChaseBody.setFixedRotation(true);
+		
+		physicsWorld.registerPhysicsConnector(new PhysicsConnector(cameraChaseRectangle, cameraChaseBody, true, false) {
 			@Override
 			public void onUpdate(float pSecondsElapsed) {
 				super.onUpdate(pSecondsElapsed);
 				camera.onUpdate(0.1f);
-				body.setLinearVelocity(5, body.getLinearVelocity().y);
+				cameraChaseBody.setLinearVelocity(playerBody.getLinearVelocity().x, cameraChaseBody.getLinearVelocity().y);
 			}
 		});
 	}
 	
 	public Body getPlayerBody() {
-		return body;
+		return playerBody;
+	}
+	
+	public Rectangle getCameraChaseRectangle() {
+		return cameraChaseRectangle;
 	}
 	
 	public void jump(int jumpFactor) {
-		body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, jumpFactor * 10));
-		//body.setAngularVelocity(2);
+		playerBody.setLinearVelocity(new Vector2(playerBody.getLinearVelocity().x, jumpFactor * 10));
 		this.registerEntityModifier(new RotationModifier(jumpFactor, 0, jumpFactor * 180));
 	}
 }

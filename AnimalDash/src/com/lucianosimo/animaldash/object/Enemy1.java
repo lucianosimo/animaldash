@@ -23,6 +23,8 @@ public class Enemy1 extends Sprite {
 	
 	private void createPhysics(PhysicsWorld physicsWorld) {
 		fixture = PhysicsFactory.createFixtureDef(0, 0, 0);
+		fixture.filter.groupIndex = -1;
+		
 		body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.StaticBody, fixture);
 		
 		this.setUserData("enemy1");
