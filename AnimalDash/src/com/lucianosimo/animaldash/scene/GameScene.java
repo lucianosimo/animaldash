@@ -1,7 +1,5 @@
 package com.lucianosimo.animaldash.scene;
 
-import java.util.Iterator;
-
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
@@ -12,14 +10,11 @@ import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
 import org.andengine.input.touch.TouchEvent;
-import org.andengine.util.debug.Debug;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.lucianosimo.animaldash.base.BaseScene;
 import com.lucianosimo.animaldash.manager.SceneManager.SceneType;
@@ -29,8 +24,6 @@ import com.lucianosimo.animaldash.object.Enemy3;
 import com.lucianosimo.animaldash.object.Enemy4;
 import com.lucianosimo.animaldash.object.Platform;
 import com.lucianosimo.animaldash.object.Player;
-
-import android.util.Log;
 
 public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	
@@ -83,10 +76,31 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	
 	private final static int DISTANCE_ENABLING_BUTTON = 400;
 	
-	//PLATFORMS
+	//Enemies
+	private final static int ENEMY_INITIAL_X = 1500;
+	private final static int ENEMIES_BETWEEN_DISTANCE = 1500;
+	private final static int ENEMIES_QUANTITY = 4;
+	
+	//Platforms
 	private final static int PLATFORMS_QUANTITY = 10;
 	private final static int PLATFORM_WIDTH = 128;
-	private final static int PLATFORM_HEIGHT = 128;
+	//private final static int PLATFORM_HEIGHT = 128;
+	
+	//Buttons
+	private final static int BUTTON_1_OFFSET_X = -200;
+	private final static int BUTTON_1_OFFSET_Y = -250;
+	private final static int BUTTON_2_OFFSET_X = -200;
+	private final static int BUTTON_2_OFFSET_Y = -500;
+	private final static int BUTTON_3_OFFSET_X = 200;
+	private final static int BUTTON_3_OFFSET_Y = -250;
+	private final static int BUTTON_4_OFFSET_X = 200;
+	private final static int BUTTON_4_OFFSET_Y = -500;
+	
+	//Camera
+	private final static int CAMERA_BOUND_X_MIN = 0;
+	private final static int CAMERA_BOUND_Y_MIN = 0;
+	private final static int CAMERA_BOUND_X_MAX = 100000000;
+	private final static int CAMERA_BOUND_Y_MAX = 1280;
 	
 	//If negative, never collides between groups, if positive yes
 	//private static final int GROUP_ENEMY = -1;
@@ -99,7 +113,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		createPhysics();
 		createPlatform();
 		createPlayer();
-		//createEnemies();
+		createNumericalEnemies();
 		createHUD();
 		setCameraProperties();
 		//DebugRenderer debug = new DebugRenderer(physicsWorld, vbom);
@@ -153,11 +167,63 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		GameScene.this.attachChild(player.getCameraChaseRectangle());
 	}
 	
-	private void createEnemies() {
-		enemy1 = new Enemy1(1500,  screenHeight/2, vbom, physicsWorld);
-		enemy2 = new Enemy2(3000,  screenHeight/2, vbom, physicsWorld);
-		enemy3 = new Enemy3(4500,  screenHeight/2, vbom, physicsWorld);
-		enemy4 = new Enemy4(6000,  screenHeight/2, vbom, physicsWorld);
+	private void createNumericalEnemies() {
+		enemy1 = new Enemy1(ENEMY_INITIAL_X,  screenHeight/2, vbom, physicsWorld) {
+			@Override
+			protected void onManagedUpdate(float pSecondsElapsed) {
+				super.onManagedUpdate(pSecondsElapsed);
+				if ((player.getX() - this.getX()) > 1000) {
+					
+					this.getEnemy1Body().setTransform((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+							this.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+							this.getEnemy1Body().getAngle());
+					
+					this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
+				}
+			}
+		};
+		enemy2 = new Enemy2(ENEMY_INITIAL_X * 2,  screenHeight/2, vbom, physicsWorld){
+			@Override
+			protected void onManagedUpdate(float pSecondsElapsed) {
+				super.onManagedUpdate(pSecondsElapsed);
+				if ((player.getX() - this.getX()) > 1000) {
+					
+					this.getEnemy2Body().setTransform((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+							this.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+							this.getEnemy2Body().getAngle());
+					
+					this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
+				}
+			}
+		};
+		enemy3 = new Enemy3(ENEMY_INITIAL_X * 3,  screenHeight/2, vbom, physicsWorld){
+			@Override
+			protected void onManagedUpdate(float pSecondsElapsed) {
+				super.onManagedUpdate(pSecondsElapsed);
+				if ((player.getX() - this.getX()) > 1000) {
+					
+					this.getEnemy3Body().setTransform((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+							this.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+							this.getEnemy3Body().getAngle());
+					
+					this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
+				}
+			}
+		};
+		enemy4 = new Enemy4(ENEMY_INITIAL_X * 4,  screenHeight/2, vbom, physicsWorld){
+			@Override
+			protected void onManagedUpdate(float pSecondsElapsed) {
+				super.onManagedUpdate(pSecondsElapsed);
+				if ((player.getX() - this.getX()) > 1000) {
+					
+					this.getEnemy4Body().setTransform((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+							this.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+							this.getEnemy4Body().getAngle());
+					
+					this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
+				}
+			}
+		};
 		
 		GameScene.this.attachChild(enemy1);
 		GameScene.this.attachChild(enemy2);
@@ -168,7 +234,13 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	private void createHUD() {
 		gameHud = new HUD();
 		
-		button1 = new Sprite(screenWidth/2 - 200, screenHeight/2 - 250, resourcesManager.game_button_1_region, vbom) {
+		createNumericalButtons();
+		
+		camera.setHUD(gameHud);
+	}
+	
+	private void createNumericalButtons() {
+		button1 = new Sprite(screenWidth/2 + BUTTON_1_OFFSET_X, screenHeight/2 + BUTTON_1_OFFSET_Y, resourcesManager.game_button_1_region, vbom) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown() && enableButton(enemy1.getX(), player.getX())) {
@@ -177,7 +249,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 				return false;
 			}
 		};
-		button2 = new Sprite(screenWidth/2 - 200, screenHeight/2 - 500, resourcesManager.game_button_2_region, vbom) {
+		button2 = new Sprite(screenWidth/2 + BUTTON_2_OFFSET_X, screenHeight/2 + BUTTON_2_OFFSET_Y, resourcesManager.game_button_2_region, vbom) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown() && enableButton(enemy2.getX(), player.getX())) {
@@ -186,7 +258,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 				return false;
 			}
 		};
-		button3 = new Sprite(screenWidth/2 + 200, screenHeight/2 - 250, resourcesManager.game_button_3_region, vbom) {
+		button3 = new Sprite(screenWidth/2 + BUTTON_3_OFFSET_X, screenHeight/2 + BUTTON_3_OFFSET_Y, resourcesManager.game_button_3_region, vbom) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown() && enableButton(enemy3.getX(), player.getX())) {
@@ -195,7 +267,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 				return false;
 			}
 		};
-		button4 = new Sprite(screenWidth/2 + 200, screenHeight/2 - 500, resourcesManager.game_button_4_region, vbom) {
+		button4 = new Sprite(screenWidth/2 + BUTTON_4_OFFSET_X, screenHeight/2 + BUTTON_4_OFFSET_Y, resourcesManager.game_button_4_region, vbom) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown() && enableButton(enemy4.getX(), player.getX())) {
@@ -214,8 +286,6 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		gameHud.registerTouchArea(button2);
 		gameHud.registerTouchArea(button3);
 		gameHud.registerTouchArea(button4);
-		
-		camera.setHUD(gameHud);
 	}
 	
 	private boolean enableButton(float enemyX, float playerX) {
@@ -224,7 +294,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	
 	private void setCameraProperties() {
 		camera.setBoundsEnabled(true);
-		camera.setBounds(0, 0, 1000000, 1280);
+		camera.setBounds(CAMERA_BOUND_X_MIN, CAMERA_BOUND_Y_MIN, CAMERA_BOUND_X_MAX, CAMERA_BOUND_Y_MAX);
 	}
 	
 	private ContactListener contactListener() {
@@ -246,8 +316,8 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 			
 			@Override
 			public void beginContact(Contact contact) {
-				final Fixture x1 = contact.getFixtureA();
-				final Fixture x2 = contact.getFixtureB();
+				//final Fixture x1 = contact.getFixtureA();
+				//final Fixture x2 = contact.getFixtureB();
 			}
 		};
 		return contactListener;
@@ -263,7 +333,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		
 	}
 	
-	private void myGarbageCollection() {
+	/*private void myGarbageCollection() {
 		Iterator<Body> allMyBodies = physicsWorld.getBodies();
         while(allMyBodies.hasNext()) {
         	try {
@@ -283,7 +353,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
         physicsWorld.reset();
  
         System.gc();
-	}
+	}*/
 	
 	@Override
 	public void handleOnPause() {
