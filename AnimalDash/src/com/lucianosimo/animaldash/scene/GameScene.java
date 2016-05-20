@@ -10,6 +10,7 @@ import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
+import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.util.debug.Debug;
 
@@ -29,6 +30,8 @@ import com.lucianosimo.animaldash.object.Enemy4;
 import com.lucianosimo.animaldash.object.Platform;
 import com.lucianosimo.animaldash.object.Player;
 
+import android.util.Log;
+
 public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	
 	//Scene indicators
@@ -45,10 +48,13 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	
 	//Instances
 	private Player player;
+	
 	private Enemy1 enemy1;
 	private Enemy2 enemy2;
 	private Enemy3 enemy3;
 	private Enemy4 enemy4;
+	
+	private Platform[] platforms;
 	
 	//Booleans
 
@@ -75,10 +81,12 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	//Constants
 	private final static int GRAVITY_Y = -20;
 	
+	private final static int DISTANCE_ENABLING_BUTTON = 400;
+	
+	//PLATFORMS
+	private final static int PLATFORMS_QUANTITY = 10;
 	private final static int PLATFORM_WIDTH = 128;
 	private final static int PLATFORM_HEIGHT = 128;
-	
-	private final static int DISTANCE_ENABLING_BUTTON = 400;
 	
 	//If negative, never collides between groups, if positive yes
 	//private static final int GROUP_ENEMY = -1;
@@ -91,7 +99,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		createPhysics();
 		createPlatform();
 		createPlayer();
-		createEnemies();
+		//createEnemies();
 		createHUD();
 		setCameraProperties();
 		//DebugRenderer debug = new DebugRenderer(physicsWorld, vbom);
@@ -111,11 +119,24 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	}
 	
 	private void createPlatform() {
-		for (int i = 0; i < 100; i++) {
-			Platform platform = new Platform(PLATFORM_WIDTH / 2 + i * PLATFORM_WIDTH, 
-					screenHeight/2 - 100, vbom, camera, physicsWorld);	
-			
-			GameScene.this.attachChild(platform);
+		platforms = new Platform[PLATFORMS_QUANTITY];
+		
+		for (int i = 0; i < PLATFORMS_QUANTITY; i++) {
+			platforms[i] = new Platform(PLATFORM_WIDTH * (i + 1), screenHeight/2 - 100, vbom, camera, physicsWorld) {
+				@Override
+				protected void onManagedUpdate(float pSecondsElapsed) {
+					super.onManagedUpdate(pSecondsElapsed);
+					if ((player.getX() - this.getX()) > 200) {
+						
+						this.getPlatformBody().setTransform((this.getX() + PLATFORM_WIDTH * PLATFORMS_QUANTITY) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+								this.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+								this.getPlatformBody().getAngle());
+						
+						this.setPosition((this.getX() + PLATFORM_WIDTH * PLATFORMS_QUANTITY), this.getY());
+					}
+				}
+			};
+			GameScene.this.attachChild(platforms[i]);
 		}
 	}
 	

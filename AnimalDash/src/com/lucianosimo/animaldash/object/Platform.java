@@ -38,4 +38,8 @@ public class Platform extends Sprite {
 			}
 		});
 	}
+	
+	public Body getPlatformBody() {
+		return body;
+	}
 }
