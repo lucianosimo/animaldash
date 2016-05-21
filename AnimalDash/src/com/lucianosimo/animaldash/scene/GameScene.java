@@ -25,6 +25,8 @@ import com.lucianosimo.animaldash.object.Enemy4;
 import com.lucianosimo.animaldash.object.Platform;
 import com.lucianosimo.animaldash.object.Player;
 
+import android.util.Log;
+
 public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	
 	//Scene indicators
@@ -42,10 +44,10 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	//Instances
 	private Player player;
 	
-	private Enemy1 enemy1;
-	private Enemy2 enemy2;
-	private Enemy3 enemy3;
-	private Enemy4 enemy4;
+	private Enemy1[] enemy1;
+	private Enemy2[] enemy2;
+	private Enemy3[] enemy3;
+	private Enemy4[] enemy4;
 	
 	private Platform[] platforms;
 	
@@ -79,7 +81,11 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	//Enemies
 	private final static int ENEMY_INITIAL_X = 1500;
 	private final static int ENEMIES_BETWEEN_DISTANCE = 1500;
-	private final static int ENEMIES_QUANTITY = 4;
+	private final static int ENEMIES_QUANTITY = 12;
+	private final static int ENEMY_1_QUANTITY = 3;
+	private final static int ENEMY_2_QUANTITY = 3;
+	private final static int ENEMY_3_QUANTITY = 3;
+	private final static int ENEMY_4_QUANTITY = 3;
 	
 	//Platforms
 	private final static int PLATFORMS_QUANTITY = 10;
@@ -140,7 +146,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 				@Override
 				protected void onManagedUpdate(float pSecondsElapsed) {
 					super.onManagedUpdate(pSecondsElapsed);
-					if ((player.getX() - this.getX()) > 200) {
+					if ((player.getX() - this.getX()) > 300) {
 						
 						this.getPlatformBody().setTransform((this.getX() + PLATFORM_WIDTH * PLATFORMS_QUANTITY) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
 								this.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
@@ -168,67 +174,75 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	}
 	
 	private void createNumericalEnemies() {
-		enemy1 = new Enemy1(ENEMY_INITIAL_X,  screenHeight/2, vbom, physicsWorld) {
-			@Override
-			protected void onManagedUpdate(float pSecondsElapsed) {
-				super.onManagedUpdate(pSecondsElapsed);
-				if ((player.getX() - this.getX()) > 1000) {
-					
-					this.getEnemy1Body().setTransform((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
-							this.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
-							this.getEnemy1Body().getAngle());
-					
-					this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
-				}
-			}
-		};
-		enemy2 = new Enemy2(ENEMY_INITIAL_X * 2,  screenHeight/2, vbom, physicsWorld){
-			@Override
-			protected void onManagedUpdate(float pSecondsElapsed) {
-				super.onManagedUpdate(pSecondsElapsed);
-				if ((player.getX() - this.getX()) > 1000) {
-					
-					this.getEnemy2Body().setTransform((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
-							this.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
-							this.getEnemy2Body().getAngle());
-					
-					this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
-				}
-			}
-		};
-		enemy3 = new Enemy3(ENEMY_INITIAL_X * 3,  screenHeight/2, vbom, physicsWorld){
-			@Override
-			protected void onManagedUpdate(float pSecondsElapsed) {
-				super.onManagedUpdate(pSecondsElapsed);
-				if ((player.getX() - this.getX()) > 1000) {
-					
-					this.getEnemy3Body().setTransform((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
-							this.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
-							this.getEnemy3Body().getAngle());
-					
-					this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
-				}
-			}
-		};
-		enemy4 = new Enemy4(ENEMY_INITIAL_X * 4,  screenHeight/2, vbom, physicsWorld){
-			@Override
-			protected void onManagedUpdate(float pSecondsElapsed) {
-				super.onManagedUpdate(pSecondsElapsed);
-				if ((player.getX() - this.getX()) > 1000) {
-					
-					this.getEnemy4Body().setTransform((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
-							this.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
-							this.getEnemy4Body().getAngle());
-					
-					this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
-				}
-			}
-		};
+		enemy1 = new Enemy1[ENEMY_1_QUANTITY];
+		enemy2 = new Enemy2[ENEMY_2_QUANTITY];
+		enemy3 = new Enemy3[ENEMY_3_QUANTITY];
+		enemy4 = new Enemy4[ENEMY_4_QUANTITY];
 		
-		GameScene.this.attachChild(enemy1);
-		GameScene.this.attachChild(enemy2);
-		GameScene.this.attachChild(enemy3);
-		GameScene.this.attachChild(enemy4);
+		for (int i = 0; i < ENEMY_1_QUANTITY; i++) {
+			enemy1[i] = new Enemy1(ENEMY_INITIAL_X + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld) {
+				@Override
+				protected void onManagedUpdate(float pSecondsElapsed) {
+					super.onManagedUpdate(pSecondsElapsed);
+					if ((player.getX() - this.getX()) > 1000) {
+						
+						this.getEnemy1Body().setTransform((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+								this.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+								this.getEnemy1Body().getAngle());
+						
+						this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
+					}
+				}
+			};
+			enemy2[i] = new Enemy2(ENEMY_INITIAL_X * 2 + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld){
+				@Override
+				protected void onManagedUpdate(float pSecondsElapsed) {
+					super.onManagedUpdate(pSecondsElapsed);
+					if ((player.getX() - this.getX()) > 1000) {
+						
+						this.getEnemy2Body().setTransform((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+								this.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+								this.getEnemy2Body().getAngle());
+						
+						this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
+					}
+				}
+			};
+			enemy3[i] = new Enemy3(ENEMY_INITIAL_X * 3 + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld){
+				@Override
+				protected void onManagedUpdate(float pSecondsElapsed) {
+					super.onManagedUpdate(pSecondsElapsed);
+					if ((player.getX() - this.getX()) > 1000) {
+						
+						this.getEnemy3Body().setTransform((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+								this.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+								this.getEnemy3Body().getAngle());
+						
+						this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
+					}
+				}
+			};
+			enemy4[i] = new Enemy4(ENEMY_INITIAL_X * 4 + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld){
+				@Override
+				protected void onManagedUpdate(float pSecondsElapsed) {
+					super.onManagedUpdate(pSecondsElapsed);
+					if ((player.getX() - this.getX()) > 1000) {
+						
+						this.getEnemy4Body().setTransform((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY) / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+								this.getY() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+								this.getEnemy4Body().getAngle());
+						
+						this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
+					}
+				}
+			};
+			
+			GameScene.this.attachChild(enemy1[i]);
+			GameScene.this.attachChild(enemy2[i]);
+			GameScene.this.attachChild(enemy3[i]);
+			GameScene.this.attachChild(enemy4[i]);
+		}
+
 	}
 	
 	private void createHUD() {
@@ -243,7 +257,10 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		button1 = new Sprite(screenWidth/2 + BUTTON_1_OFFSET_X, screenHeight/2 + BUTTON_1_OFFSET_Y, resourcesManager.game_button_1_region, vbom) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
-				if (pSceneTouchEvent.isActionDown() && enableButton(enemy1.getX(), player.getX())) {
+				if (pSceneTouchEvent.isActionDown() && 
+						(enableButton(enemy1[0].getX(), player.getX())
+								|| enableButton(enemy1[1].getX(), player.getX())
+								|| enableButton(enemy1[2].getX(), player.getX()))) {
 					player.jump(1);
 				}
 				return false;
@@ -252,7 +269,10 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		button2 = new Sprite(screenWidth/2 + BUTTON_2_OFFSET_X, screenHeight/2 + BUTTON_2_OFFSET_Y, resourcesManager.game_button_2_region, vbom) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
-				if (pSceneTouchEvent.isActionDown() && enableButton(enemy2.getX(), player.getX())) {
+				if (pSceneTouchEvent.isActionDown() && 
+						(enableButton(enemy2[0].getX(), player.getX())
+								|| enableButton(enemy2[1].getX(), player.getX())
+								|| enableButton(enemy2[2].getX(), player.getX()))) {
 					player.jump(2);
 				}
 				return false;
@@ -261,7 +281,10 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		button3 = new Sprite(screenWidth/2 + BUTTON_3_OFFSET_X, screenHeight/2 + BUTTON_3_OFFSET_Y, resourcesManager.game_button_3_region, vbom) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
-				if (pSceneTouchEvent.isActionDown() && enableButton(enemy3.getX(), player.getX())) {
+				if (pSceneTouchEvent.isActionDown() && 
+						(enableButton(enemy3[0].getX(), player.getX())
+								|| enableButton(enemy3[1].getX(), player.getX())
+								|| enableButton(enemy3[2].getX(), player.getX()))) {
 					player.jump(3);
 				}
 				return false;
@@ -270,7 +293,10 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		button4 = new Sprite(screenWidth/2 + BUTTON_4_OFFSET_X, screenHeight/2 + BUTTON_4_OFFSET_Y, resourcesManager.game_button_4_region, vbom) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
-				if (pSceneTouchEvent.isActionDown() && enableButton(enemy4.getX(), player.getX())) {
+				if (pSceneTouchEvent.isActionDown() && 
+						(enableButton(enemy4[0].getX(), player.getX())
+								|| enableButton(enemy4[1].getX(), player.getX())
+								|| enableButton(enemy4[2].getX(), player.getX()))) {
 					player.jump(4);
 				}
 				return false;
