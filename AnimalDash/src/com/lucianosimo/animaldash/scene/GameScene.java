@@ -1,5 +1,9 @@
 package com.lucianosimo.animaldash.scene;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
@@ -24,8 +28,6 @@ import com.lucianosimo.animaldash.object.Enemy3;
 import com.lucianosimo.animaldash.object.Enemy4;
 import com.lucianosimo.animaldash.object.Platform;
 import com.lucianosimo.animaldash.object.Player;
-
-import android.util.Log;
 
 public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	
@@ -81,11 +83,11 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	//Enemies
 	private final static int ENEMY_INITIAL_X = 1500;
 	private final static int ENEMIES_BETWEEN_DISTANCE = 1500;
-	private final static int ENEMIES_QUANTITY = 12;
-	private final static int ENEMY_1_QUANTITY = 3;
-	private final static int ENEMY_2_QUANTITY = 3;
-	private final static int ENEMY_3_QUANTITY = 3;
-	private final static int ENEMY_4_QUANTITY = 3;
+	private final static int ENEMIES_QUANTITY = 16;
+	private final static int ENEMY_1_QUANTITY = ENEMIES_QUANTITY / 4;
+	private final static int ENEMY_2_QUANTITY = ENEMIES_QUANTITY / 4;
+	private final static int ENEMY_3_QUANTITY = ENEMIES_QUANTITY / 4;
+	private final static int ENEMY_4_QUANTITY = ENEMIES_QUANTITY / 4;
 	
 	//Platforms
 	private final static int PLATFORMS_QUANTITY = 10;
@@ -179,8 +181,20 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		enemy3 = new Enemy3[ENEMY_3_QUANTITY];
 		enemy4 = new Enemy4[ENEMY_4_QUANTITY];
 		
+		ArrayList<Integer> enemiesPositions = new ArrayList<Integer>();
+		
+		enemiesPositions.add(ENEMY_INITIAL_X);
+		enemiesPositions.add(ENEMY_INITIAL_X * 2);
+		enemiesPositions.add(ENEMY_INITIAL_X * 3);
+		enemiesPositions.add(ENEMY_INITIAL_X * 4);
+		
 		for (int i = 0; i < ENEMY_1_QUANTITY; i++) {
-			enemy1[i] = new Enemy1(ENEMY_INITIAL_X + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld) {
+			
+			long seed = System.nanoTime();
+			Collections.shuffle(enemiesPositions, new Random(seed));
+			//Collections.sort(enemiesPositions);
+			
+			enemy1[i] = new Enemy1(enemiesPositions.get(0) + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld) {
 				@Override
 				protected void onManagedUpdate(float pSecondsElapsed) {
 					super.onManagedUpdate(pSecondsElapsed);
@@ -194,7 +208,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 					}
 				}
 			};
-			enemy2[i] = new Enemy2(ENEMY_INITIAL_X * 2 + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld){
+			enemy2[i] = new Enemy2(enemiesPositions.get(1) + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld){
 				@Override
 				protected void onManagedUpdate(float pSecondsElapsed) {
 					super.onManagedUpdate(pSecondsElapsed);
@@ -208,7 +222,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 					}
 				}
 			};
-			enemy3[i] = new Enemy3(ENEMY_INITIAL_X * 3 + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld){
+			enemy3[i] = new Enemy3(enemiesPositions.get(2) + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld){
 				@Override
 				protected void onManagedUpdate(float pSecondsElapsed) {
 					super.onManagedUpdate(pSecondsElapsed);
@@ -222,7 +236,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 					}
 				}
 			};
-			enemy4[i] = new Enemy4(ENEMY_INITIAL_X * 4 + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld){
+			enemy4[i] = new Enemy4(enemiesPositions.get(3) + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld){
 				@Override
 				protected void onManagedUpdate(float pSecondsElapsed) {
 					super.onManagedUpdate(pSecondsElapsed);
