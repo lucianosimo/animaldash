@@ -14,6 +14,7 @@ import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
 import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.texture.region.ITextureRegion;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -37,6 +38,10 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	//Physics world variable
 	private PhysicsWorld physicsWorld;
 	
+	//Menu
+	private Sprite menu_title;
+	private Sprite menu_play_button;
+	
 	//HUD sprites
 	
 	//Constants	
@@ -51,9 +56,17 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	private Enemy3[] enemy3;
 	private Enemy4[] enemy4;
 	
+	//Fruits
+	private Sprite[] fruits;
+	private final static int FRUITS_INITIAL_X = 1500;
+	private final static int FRUITS_BETWEEN_DISTANCE = 1500;
+	private final static int FRUITS_CENTER_SCREEN_OFFSET_Y = 200;
+	private final static int FRUITS_QUANTITY = 4;
+	
 	private Platform[] platforms;
 	
 	//Booleans
+	private boolean gameStarted = false;
 
 	//Integers
 	
@@ -121,8 +134,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		createPhysics();
 		createPlatform();
 		createPlayer();
-		createNumericalEnemies();
-		createHUD();
+		createMenu();
 		setCameraProperties();
 		//DebugRenderer debug = new DebugRenderer(physicsWorld, vbom);
         //GameScene.this.attachChild(debug);
@@ -175,6 +187,44 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		GameScene.this.attachChild(player.getCameraChaseRectangle());
 	}
 	
+	private void createMenu() {
+		gameHud = new HUD();
+		
+		menu_title = new Sprite(screenWidth / 2, screenHeight - 300, resourcesManager.game_menu_title_region, vbom);
+		
+		menu_play_button = new Sprite(screenWidth / 2, screenHeight / 2, resourcesManager.game_menu_play_button_region, vbom) {
+			@Override
+			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+				if (pSceneTouchEvent.isActionDown() && !gameStarted) {
+					
+					createNumericalEnemies();
+					createNumericalButtons();
+					createFruits();
+					
+					engine.runOnUpdateThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							gameHud.detachChild(menu_title);
+							gameHud.detachChild(menu_play_button);
+							gameHud.unregisterTouchArea(menu_play_button);
+						}
+					});
+					gameStarted = true;
+					
+				}
+				return false;
+			}
+		};
+		
+		gameHud.attachChild(menu_title);
+		gameHud.attachChild(menu_play_button);
+		gameHud.registerTouchArea(menu_play_button);
+		
+		camera.setHUD(gameHud);
+		
+	}
+	
 	private void createNumericalEnemies() {
 		enemy1 = new Enemy1[ENEMY_1_QUANTITY];
 		enemy2 = new Enemy2[ENEMY_2_QUANTITY];
@@ -183,10 +233,10 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		
 		ArrayList<Integer> enemiesPositions = new ArrayList<Integer>();
 		
-		enemiesPositions.add(ENEMY_INITIAL_X);
-		enemiesPositions.add(ENEMY_INITIAL_X * 2);
-		enemiesPositions.add(ENEMY_INITIAL_X * 3);
-		enemiesPositions.add(ENEMY_INITIAL_X * 4);
+		enemiesPositions.add((int)player.getX() + ENEMY_INITIAL_X);
+		enemiesPositions.add((int)player.getX() + ENEMY_INITIAL_X * 2);
+		enemiesPositions.add((int)player.getX() + ENEMY_INITIAL_X * 3);
+		enemiesPositions.add((int)player.getX() + ENEMY_INITIAL_X * 4);
 		
 		for (int i = 0; i < ENEMY_1_QUANTITY; i++) {
 			
@@ -259,14 +309,6 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 
 	}
 	
-	private void createHUD() {
-		gameHud = new HUD();
-		
-		createNumericalButtons();
-		
-		camera.setHUD(gameHud);
-	}
-	
 	private void createNumericalButtons() {
 		button1 = new Sprite(screenWidth/2 + BUTTON_1_OFFSET_X, screenHeight/2 + BUTTON_1_OFFSET_Y, resourcesManager.game_button_1_region, vbom) {
 			@Override
@@ -274,7 +316,8 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 				if (pSceneTouchEvent.isActionDown() && 
 						(enableButton(enemy1[0].getX(), player.getX())
 								|| enableButton(enemy1[1].getX(), player.getX())
-								|| enableButton(enemy1[2].getX(), player.getX()))) {
+								|| enableButton(enemy1[2].getX(), player.getX())
+								|| enableButton(enemy1[3].getX(), player.getX()))) {
 					player.jump(1);
 				}
 				return false;
@@ -286,7 +329,8 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 				if (pSceneTouchEvent.isActionDown() && 
 						(enableButton(enemy2[0].getX(), player.getX())
 								|| enableButton(enemy2[1].getX(), player.getX())
-								|| enableButton(enemy2[2].getX(), player.getX()))) {
+								|| enableButton(enemy2[2].getX(), player.getX())
+								|| enableButton(enemy2[3].getX(), player.getX()))) {
 					player.jump(2);
 				}
 				return false;
@@ -298,7 +342,8 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 				if (pSceneTouchEvent.isActionDown() && 
 						(enableButton(enemy3[0].getX(), player.getX())
 								|| enableButton(enemy3[1].getX(), player.getX())
-								|| enableButton(enemy3[2].getX(), player.getX()))) {
+								|| enableButton(enemy3[2].getX(), player.getX())
+								|| enableButton(enemy3[3].getX(), player.getX()))) {
 					player.jump(3);
 				}
 				return false;
@@ -310,7 +355,8 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 				if (pSceneTouchEvent.isActionDown() && 
 						(enableButton(enemy4[0].getX(), player.getX())
 								|| enableButton(enemy4[1].getX(), player.getX())
-								|| enableButton(enemy4[2].getX(), player.getX()))) {
+								|| enableButton(enemy4[2].getX(), player.getX())
+								|| enableButton(enemy4[3].getX(), player.getX()))) {
 					player.jump(4);
 				}
 				return false;
@@ -326,6 +372,55 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		gameHud.registerTouchArea(button2);
 		gameHud.registerTouchArea(button3);
 		gameHud.registerTouchArea(button4);
+	}
+	
+	private void createFruits() {
+		ArrayList<Integer> fruitsTextureOrder = new ArrayList<Integer>();
+		int[] fruitsPositions = new int[FRUITS_QUANTITY];
+		fruits = new Sprite[FRUITS_QUANTITY];
+		ITextureRegion fruitRegion;
+		long seed = System.nanoTime();
+		
+		for (int i = 0; i < FRUITS_QUANTITY; i++) {
+			fruitsPositions[i] = (int)player.getX() + FRUITS_INITIAL_X * (i + 1);
+			fruitsTextureOrder.add(i + 1);
+		}
+		
+		Collections.shuffle(fruitsTextureOrder, new Random(seed));
+		
+		for (int i = 0; i < FRUITS_QUANTITY; i++) {
+			
+			switch (fruitsTextureOrder.get(i)) {
+			case 1:
+				fruitRegion = resourcesManager.game_fruit_1_region;
+				break;
+			case 2:
+				fruitRegion = resourcesManager.game_fruit_2_region;
+				break;
+			case 3:
+				fruitRegion = resourcesManager.game_fruit_3_region;
+				break;
+			case 4:
+				fruitRegion = resourcesManager.game_fruit_4_region;
+				break;
+			default:
+				fruitRegion = resourcesManager.game_fruit_1_region;
+				break;
+			}
+			
+			fruits[i] = new Sprite(fruitsPositions[i], screenHeight / 2 + FRUITS_CENTER_SCREEN_OFFSET_Y, 
+					fruitRegion, vbom) {
+				@Override
+				protected void onManagedUpdate(float pSecondsElapsed) {
+					super.onManagedUpdate(pSecondsElapsed);
+					if (player.collidesWith(this)) {
+						this.setX(this.getX() + FRUITS_BETWEEN_DISTANCE * FRUITS_QUANTITY);
+					}
+				}
+			};
+			
+			GameScene.this.attachChild(fruits[i]);
+		}
 	}
 	
 	private boolean enableButton(float enemyX, float playerX) {
