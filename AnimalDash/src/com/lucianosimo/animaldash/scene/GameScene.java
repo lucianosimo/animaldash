@@ -7,7 +7,7 @@ import java.util.Random;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.scene.background.ParallaxBackground;
+import org.andengine.entity.scene.background.AutoParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
@@ -43,6 +43,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	private Sprite menu_play_button;
 	
 	//HUD sprites
+	private Sprite game_hud_background;
 	
 	//Constants	
 	private float screenWidth;
@@ -101,6 +102,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	private final static int ENEMY_2_QUANTITY = ENEMIES_QUANTITY / 4;
 	private final static int ENEMY_3_QUANTITY = ENEMIES_QUANTITY / 4;
 	private final static int ENEMY_4_QUANTITY = ENEMIES_QUANTITY / 4;
+	private final static int ENEMY_CENTER_OFFSET_Y = 0;
 	
 	//Platforms
 	private final static int PLATFORMS_QUANTITY = 10;
@@ -123,6 +125,8 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	private final static int CAMERA_BOUND_X_MAX = 100000000;
 	private final static int CAMERA_BOUND_Y_MAX = 1280;
 	
+	private final static int PLATFORM_CENTER_OFFSET_Y = -110;
+	
 	//If negative, never collides between groups, if positive yes
 	//private static final int GROUP_ENEMY = -1;
 
@@ -141,9 +145,20 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	}
 	
 	private void createBackground() {
-		ParallaxBackground background = new ParallaxBackground(0, 0, 0);
-		background.attachParallaxEntity(new ParallaxEntity(0, new Sprite(screenWidth/2, screenHeight/2, resourcesManager.game_background_region, vbom)));
-		this.setBackground(background);
+		final AutoParallaxBackground autoParallaxBackground = new AutoParallaxBackground(0, 0, 0, 5);
+		autoParallaxBackground.attachParallaxEntity(
+				new ParallaxEntity(0.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_1_region, vbom)));
+		autoParallaxBackground.attachParallaxEntity(
+				new ParallaxEntity(-2.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_2_region, vbom)));
+		autoParallaxBackground.attachParallaxEntity(
+				new ParallaxEntity(-5.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_3_region, vbom)));
+		autoParallaxBackground.attachParallaxEntity(
+				new ParallaxEntity(-7.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_4_region, vbom)));
+		autoParallaxBackground.attachParallaxEntity(
+				new ParallaxEntity(-10.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_5_region, vbom)));
+		autoParallaxBackground.attachParallaxEntity(
+				new ParallaxEntity(-12.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_6_region, vbom)));
+	    this.setBackground(autoParallaxBackground);
 	}
 
 	private void createPhysics() {
@@ -156,7 +171,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		platforms = new Platform[PLATFORMS_QUANTITY];
 		
 		for (int i = 0; i < PLATFORMS_QUANTITY; i++) {
-			platforms[i] = new Platform(PLATFORM_WIDTH * (i + 1), screenHeight/2 - 100, vbom, camera, physicsWorld) {
+			platforms[i] = new Platform(PLATFORM_WIDTH * (i + 1), screenHeight/2 + PLATFORM_CENTER_OFFSET_Y, vbom, camera, physicsWorld) {
 				@Override
 				protected void onManagedUpdate(float pSecondsElapsed) {
 					super.onManagedUpdate(pSecondsElapsed);
@@ -190,6 +205,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	private void createMenu() {
 		gameHud = new HUD();
 		
+		game_hud_background = new Sprite(screenWidth / 2, screenHeight / 2 - 385, resourcesManager.game_hud_background_region, vbom);
 		menu_title = new Sprite(screenWidth / 2, screenHeight - 300, resourcesManager.game_menu_title_region, vbom);
 		
 		menu_play_button = new Sprite(screenWidth / 2, screenHeight / 2, resourcesManager.game_menu_play_button_region, vbom) {
@@ -219,6 +235,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 		
 		gameHud.attachChild(menu_title);
 		gameHud.attachChild(menu_play_button);
+		gameHud.attachChild(game_hud_background);
 		gameHud.registerTouchArea(menu_play_button);
 		
 		camera.setHUD(gameHud);
@@ -244,7 +261,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 			Collections.shuffle(enemiesPositions, new Random(seed));
 			//Collections.sort(enemiesPositions);
 			
-			enemy1[i] = new Enemy1(enemiesPositions.get(0) + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld) {
+			enemy1[i] = new Enemy1(enemiesPositions.get(0) + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2 + ENEMY_CENTER_OFFSET_Y, vbom, physicsWorld) {
 				@Override
 				protected void onManagedUpdate(float pSecondsElapsed) {
 					super.onManagedUpdate(pSecondsElapsed);
@@ -258,7 +275,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 					}
 				}
 			};
-			enemy2[i] = new Enemy2(enemiesPositions.get(1) + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld){
+			enemy2[i] = new Enemy2(enemiesPositions.get(1) + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2 + ENEMY_CENTER_OFFSET_Y, vbom, physicsWorld){
 				@Override
 				protected void onManagedUpdate(float pSecondsElapsed) {
 					super.onManagedUpdate(pSecondsElapsed);
@@ -272,7 +289,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 					}
 				}
 			};
-			enemy3[i] = new Enemy3(enemiesPositions.get(2) + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld){
+			enemy3[i] = new Enemy3(enemiesPositions.get(2) + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2 + ENEMY_CENTER_OFFSET_Y, vbom, physicsWorld){
 				@Override
 				protected void onManagedUpdate(float pSecondsElapsed) {
 					super.onManagedUpdate(pSecondsElapsed);
@@ -286,7 +303,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 					}
 				}
 			};
-			enemy4[i] = new Enemy4(enemiesPositions.get(3) + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2, vbom, physicsWorld){
+			enemy4[i] = new Enemy4(enemiesPositions.get(3) + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2 + ENEMY_CENTER_OFFSET_Y, vbom, physicsWorld){
 				@Override
 				protected void onManagedUpdate(float pSecondsElapsed) {
 					super.onManagedUpdate(pSecondsElapsed);

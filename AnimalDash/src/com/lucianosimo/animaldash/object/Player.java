@@ -20,7 +20,7 @@ public abstract class Player extends Sprite{
 	private final static int PLAYER_INITIAL_SPEED = 5;
 	private final static int CAMERA_CHASE_RECTANGLE_WIDTH = 1;
 	private final static int CAMERA_CHASE_RECTANGLE_HEIGHT = 1;
-	private final static int CAMERA_CHASE_PLAYER_DISTANCE = 250;
+	private final static int CAMERA_CHASE_PLAYER_DISTANCE = 450;
 	
 	private Body playerBody;
 	private FixtureDef playerFixture;

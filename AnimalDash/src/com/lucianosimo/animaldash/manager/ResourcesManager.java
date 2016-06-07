@@ -35,6 +35,7 @@ public class ResourcesManager {
 	//Game fonts
 	
 	//Game HUD
+	public ITextureRegion game_hud_background_region;
 	
 	//Players
 	public ITextureRegion game_player_region;
@@ -53,7 +54,12 @@ public class ResourcesManager {
 	public ITextureRegion game_platform_region;
 	
 	//Backgrounds
-	public ITextureRegion game_background_region;
+	public ITextureRegion game_background_1_layer_1_region;
+	public ITextureRegion game_background_1_layer_2_region;
+	public ITextureRegion game_background_1_layer_3_region;
+	public ITextureRegion game_background_1_layer_4_region;
+	public ITextureRegion game_background_1_layer_5_region;
+	public ITextureRegion game_background_1_layer_6_region;
 	
 	//Animated
 	
@@ -75,7 +81,12 @@ public class ResourcesManager {
 
 	//Game Textures
 	private BuildableBitmapTextureAtlas gameTextureAtlas;
-	private BuildableBitmapTextureAtlas gameBackgroundTextureAtlas;
+	private BuildableBitmapTextureAtlas gameBackgroundLayer1TextureAtlas;
+	private BuildableBitmapTextureAtlas gameBackgroundLayer2TextureAtlas;
+	private BuildableBitmapTextureAtlas gameBackgroundLayer3TextureAtlas;
+	private BuildableBitmapTextureAtlas gameBackgroundLayer4TextureAtlas;
+	private BuildableBitmapTextureAtlas gameBackgroundLayer5TextureAtlas;
+	private BuildableBitmapTextureAtlas gameBackgroundLayer6TextureAtlas;
 	
 	//Splash Methods
 	public void loadSplashScreen() {
@@ -106,10 +117,22 @@ public class ResourcesManager {
 	private void loadGameGraphics() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
 		
-		gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1000, 1000, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		gameBackgroundTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 720, 1280, TextureOptions.BILINEAR);
+		gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1500, 1500, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		gameBackgroundLayer1TextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1600, 1280, TextureOptions.BILINEAR);
+		gameBackgroundLayer2TextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1600, 1280, TextureOptions.BILINEAR);
+		gameBackgroundLayer3TextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1600, 1280, TextureOptions.BILINEAR);
+		gameBackgroundLayer4TextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1600, 1280, TextureOptions.BILINEAR);
+		gameBackgroundLayer5TextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1600, 1280, TextureOptions.BILINEAR);
+		gameBackgroundLayer6TextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1600, 1280, TextureOptions.BILINEAR);
 		
-		game_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameBackgroundTextureAtlas, activity, "game_background.png");
+		game_background_1_layer_1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameBackgroundLayer1TextureAtlas, activity, "game_background_1_layer_1.png");
+		game_background_1_layer_2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameBackgroundLayer2TextureAtlas, activity, "game_background_1_layer_2.png");
+		game_background_1_layer_3_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameBackgroundLayer3TextureAtlas, activity, "game_background_1_layer_3.png");
+		game_background_1_layer_4_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameBackgroundLayer4TextureAtlas, activity, "game_background_1_layer_4.png");
+		game_background_1_layer_5_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameBackgroundLayer5TextureAtlas, activity, "game_background_1_layer_5.png");
+		game_background_1_layer_6_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameBackgroundLayer6TextureAtlas, activity, "game_background_1_layer_6.png");
+		
+		game_hud_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_hud_background.png");
 		
 		game_menu_title_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_menu_title.png");
 		game_menu_play_button_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_menu_play_button.png");
@@ -137,9 +160,19 @@ public class ResourcesManager {
 		
 		try {
 			this.gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-			this.gameBackgroundTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.gameBackgroundLayer1TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.gameBackgroundLayer2TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.gameBackgroundLayer3TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.gameBackgroundLayer4TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.gameBackgroundLayer5TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.gameBackgroundLayer6TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.gameTextureAtlas.load();
-			this.gameBackgroundTextureAtlas.load();
+			this.gameBackgroundLayer1TextureAtlas.load();
+			this.gameBackgroundLayer2TextureAtlas.load();
+			this.gameBackgroundLayer3TextureAtlas.load();
+			this.gameBackgroundLayer4TextureAtlas.load();
+			this.gameBackgroundLayer5TextureAtlas.load();
+			this.gameBackgroundLayer6TextureAtlas.load();
 		} catch (final TextureAtlasBuilderException e) {
 			Debug.e(e);
 		}
@@ -160,7 +193,12 @@ public class ResourcesManager {
 	
 	private void unloadGameTextures() {
 		this.gameTextureAtlas.unload();
-		this.gameBackgroundTextureAtlas.unload();
+		this.gameBackgroundLayer1TextureAtlas.unload();
+		this.gameBackgroundLayer2TextureAtlas.unload();
+		this.gameBackgroundLayer3TextureAtlas.unload();
+		this.gameBackgroundLayer4TextureAtlas.unload();
+		this.gameBackgroundLayer5TextureAtlas.unload();
+		this.gameBackgroundLayer6TextureAtlas.unload();
 	}
 	
 	private void unloadGameFonts() {
