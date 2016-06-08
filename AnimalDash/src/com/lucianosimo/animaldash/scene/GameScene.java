@@ -59,8 +59,8 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	
 	//Fruits
 	private Sprite[] fruits;
-	private final static int FRUITS_INITIAL_X = 1500;
-	private final static int FRUITS_BETWEEN_DISTANCE = 1500;
+	private final static int FRUITS_INITIAL_X = 2000;
+	private final static int FRUITS_BETWEEN_DISTANCE = 2000;
 	private final static int FRUITS_CENTER_SCREEN_OFFSET_Y = 200;
 	private final static int FRUITS_QUANTITY = 4;
 	
@@ -102,8 +102,8 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	private final static int DISTANCE_ENABLING_BUTTON = 400;
 	
 	//Enemies
-	private final static int ENEMY_INITIAL_X = 1500;
-	private final static int ENEMIES_BETWEEN_DISTANCE = 1500;
+	private final static int ENEMY_INITIAL_X = 2000;
+	private final static int ENEMIES_BETWEEN_DISTANCE = 2000;
 	private final static int ENEMIES_QUANTITY = 16;
 	private final static int ENEMY_1_QUANTITY = ENEMIES_QUANTITY / 4;
 	private final static int ENEMY_2_QUANTITY = ENEMIES_QUANTITY / 4;
