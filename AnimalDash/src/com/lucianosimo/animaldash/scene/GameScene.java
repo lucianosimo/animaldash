@@ -84,10 +84,17 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	//Rectangles
 	
 	//Counters
+	private int pressedButtonCounter;
 	
-	//Pools
-	
-	//Explosions
+	//Background
+	private AutoParallaxBackground autoParallaxBackground;
+	private ParallaxEntity backgroundLayer1;
+	private ParallaxEntity backgroundLayer2;
+	private ParallaxEntity backgroundLayer3;
+	private ParallaxEntity backgroundLayer4;
+	private ParallaxEntity backgroundLayer5;
+	private ParallaxEntity backgroundLayer6;
+	private int parallaxChangeForSecond;
 
 	//Constants
 	private final static int GRAVITY_Y = -20;
@@ -145,19 +152,24 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	}
 	
 	private void createBackground() {
-		final AutoParallaxBackground autoParallaxBackground = new AutoParallaxBackground(0, 0, 0, 5);
-		autoParallaxBackground.attachParallaxEntity(
-				new ParallaxEntity(0.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_1_region, vbom)));
-		autoParallaxBackground.attachParallaxEntity(
-				new ParallaxEntity(-2.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_2_region, vbom)));
-		autoParallaxBackground.attachParallaxEntity(
-				new ParallaxEntity(-5.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_3_region, vbom)));
-		autoParallaxBackground.attachParallaxEntity(
-				new ParallaxEntity(-7.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_4_region, vbom)));
-		autoParallaxBackground.attachParallaxEntity(
-				new ParallaxEntity(-10.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_5_region, vbom)));
-		autoParallaxBackground.attachParallaxEntity(
-				new ParallaxEntity(-12.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_6_region, vbom)));
+		parallaxChangeForSecond = 5;
+		
+		autoParallaxBackground = new AutoParallaxBackground(0, 0, 0, parallaxChangeForSecond);
+		
+		backgroundLayer1 = new ParallaxEntity(0.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_1_region, vbom));
+		backgroundLayer2 = new ParallaxEntity(-2.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_2_region, vbom));
+		backgroundLayer3 = new ParallaxEntity(-5.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_3_region, vbom));
+		backgroundLayer4 = new ParallaxEntity(-7.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_4_region, vbom));
+		backgroundLayer5 = new ParallaxEntity(-10.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_5_region, vbom));
+		backgroundLayer6 = new ParallaxEntity(-12.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_6_region, vbom));
+		
+		autoParallaxBackground.attachParallaxEntity(backgroundLayer1);
+		autoParallaxBackground.attachParallaxEntity(backgroundLayer2);
+		autoParallaxBackground.attachParallaxEntity(backgroundLayer3);
+		autoParallaxBackground.attachParallaxEntity(backgroundLayer4);
+		autoParallaxBackground.attachParallaxEntity(backgroundLayer5);
+		autoParallaxBackground.attachParallaxEntity(backgroundLayer6);
+		
 	    this.setBackground(autoParallaxBackground);
 	}
 
@@ -191,7 +203,21 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	
 	private void createPlayer() {
 		player = new Player(screenWidth/2, screenHeight/2 + 200, vbom, camera, physicsWorld) {
-			
+			@Override
+			protected void onManagedUpdate(float pSecondsElapsed) {
+				super.onManagedUpdate(pSecondsElapsed);
+				
+				if (pressedButtonCounter == 1) {
+					pressedButtonCounter = 0;
+					player.incrementSpeed();
+					
+					if (parallaxChangeForSecond <= 10) {
+						parallaxChangeForSecond++;
+						autoParallaxBackground.setParallaxChangePerSecond(parallaxChangeForSecond);
+					}
+					
+				}
+			}
 			@Override
 			public void onDie() {
 				
@@ -205,7 +231,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	private void createMenu() {
 		gameHud = new HUD();
 		
-		game_hud_background = new Sprite(screenWidth / 2, screenHeight / 2 - 385, resourcesManager.game_hud_background_region, vbom);
+		game_hud_background = new Sprite(screenWidth / 2, screenHeight / 2 - 400, resourcesManager.game_hud_background_region, vbom);
 		menu_title = new Sprite(screenWidth / 2, screenHeight - 300, resourcesManager.game_menu_title_region, vbom);
 		
 		menu_play_button = new Sprite(screenWidth / 2, screenHeight / 2, resourcesManager.game_menu_play_button_region, vbom) {
@@ -335,7 +361,10 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 								|| enableButton(enemy1[1].getX(), player.getX())
 								|| enableButton(enemy1[2].getX(), player.getX())
 								|| enableButton(enemy1[3].getX(), player.getX()))) {
+					
+					pressedButtonCounter++;
 					player.jump(1);
+					
 				}
 				return false;
 			}
@@ -348,7 +377,10 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 								|| enableButton(enemy2[1].getX(), player.getX())
 								|| enableButton(enemy2[2].getX(), player.getX())
 								|| enableButton(enemy2[3].getX(), player.getX()))) {
+					
+					pressedButtonCounter++;
 					player.jump(2);
+					
 				}
 				return false;
 			}
@@ -361,7 +393,10 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 								|| enableButton(enemy3[1].getX(), player.getX())
 								|| enableButton(enemy3[2].getX(), player.getX())
 								|| enableButton(enemy3[3].getX(), player.getX()))) {
+					
+					pressedButtonCounter++;
 					player.jump(3);
+					
 				}
 				return false;
 			}
@@ -374,7 +409,10 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 								|| enableButton(enemy4[1].getX(), player.getX())
 								|| enableButton(enemy4[2].getX(), player.getX())
 								|| enableButton(enemy4[3].getX(), player.getX()))) {
+					
+					pressedButtonCounter++;
 					player.jump(4);
+					
 				}
 				return false;
 			}

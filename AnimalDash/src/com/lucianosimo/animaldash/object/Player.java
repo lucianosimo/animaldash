@@ -18,8 +18,8 @@ import com.lucianosimo.animaldash.manager.ResourcesManager;
 public abstract class Player extends Sprite{
 
 	private final static int PLAYER_INITIAL_SPEED = 5;
-	private final static int CAMERA_CHASE_RECTANGLE_WIDTH = 1;
-	private final static int CAMERA_CHASE_RECTANGLE_HEIGHT = 1;
+	private final static int CAMERA_CHASE_RECTANGLE_WIDTH = 128;
+	private final static int CAMERA_CHASE_RECTANGLE_HEIGHT = 128;
 	private final static int CAMERA_CHASE_PLAYER_DISTANCE = 450;
 	
 	private Body playerBody;
@@ -28,6 +28,8 @@ public abstract class Player extends Sprite{
 	private Body cameraChaseBody;
 	private FixtureDef cameraChaseFixture;
 	private Rectangle cameraChaseRectangle;
+	private int speedIncrement = 0;
+	private int speedIncrementLimit = 5;
 	
 	public abstract void onDie();
 	
@@ -43,6 +45,7 @@ public abstract class Player extends Sprite{
 	private void createPlayerPhysics(PhysicsWorld physicsWorld) {
 		playerFixture = PhysicsFactory.createFixtureDef(0, 0, 0);
 		playerBody = PhysicsFactory.createCircleBody(physicsWorld, this, BodyType.DynamicBody, playerFixture);
+		playerFixture.filter.groupIndex = -1;
 		
 		this.setUserData("player");
 		playerBody.setUserData("player");
@@ -53,13 +56,14 @@ public abstract class Player extends Sprite{
 			@Override
 			public void onUpdate(float pSecondsElapsed) {
 				super.onUpdate(pSecondsElapsed);
-				playerBody.setLinearVelocity(PLAYER_INITIAL_SPEED, playerBody.getLinearVelocity().y);
+				playerBody.setLinearVelocity(PLAYER_INITIAL_SPEED + speedIncrement, playerBody.getLinearVelocity().y);
 			}
 		});
 	}
 	
 	private void createCameraChaseRectanglePhysics(float pX, float pY, final Camera camera, PhysicsWorld physicsWorld, VertexBufferObjectManager vbom) {
 		cameraChaseRectangle = new Rectangle(pX + CAMERA_CHASE_PLAYER_DISTANCE, pY, CAMERA_CHASE_RECTANGLE_WIDTH, CAMERA_CHASE_RECTANGLE_HEIGHT, vbom);
+		cameraChaseRectangle.setAlpha(0);
 		
 		cameraChaseFixture = PhysicsFactory.createFixtureDef(0, 0, 0);
 		cameraChaseFixture.filter.groupIndex = -1;
@@ -86,6 +90,16 @@ public abstract class Player extends Sprite{
 	
 	public Rectangle getCameraChaseRectangle() {
 		return cameraChaseRectangle;
+	}
+	
+	public Body getCameraChaseBody() {
+		return cameraChaseBody;
+	}
+	
+	public void incrementSpeed() {
+		if (speedIncrement <= speedIncrementLimit) {
+			speedIncrement += 1;
+		}
 	}
 	
 	public void jump(int jumpFactor) {
