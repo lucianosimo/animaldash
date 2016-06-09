@@ -44,8 +44,9 @@ public abstract class Player extends Sprite{
 	
 	private void createPlayerPhysics(PhysicsWorld physicsWorld) {
 		playerFixture = PhysicsFactory.createFixtureDef(0, 0, 0);
-		playerBody = PhysicsFactory.createCircleBody(physicsWorld, this, BodyType.DynamicBody, playerFixture);
 		playerFixture.filter.groupIndex = -1;
+		
+		playerBody = PhysicsFactory.createCircleBody(physicsWorld, this, BodyType.DynamicBody, playerFixture);
 		
 		this.setUserData("player");
 		playerBody.setUserData("player");

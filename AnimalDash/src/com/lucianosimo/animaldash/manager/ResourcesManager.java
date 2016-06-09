@@ -12,6 +12,7 @@ import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSourc
 import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder.TextureAtlasBuilderException;
 import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.debug.Debug;
 
@@ -39,10 +40,10 @@ public class ResourcesManager {
 	
 	//Players
 	public ITextureRegion game_player_region;
-	public ITextureRegion game_enemy_1_region;
-	public ITextureRegion game_enemy_2_region;
-	public ITextureRegion game_enemy_3_region;
-	public ITextureRegion game_enemy_4_region;
+	public ITiledTextureRegion game_enemy_1_region;
+	public ITiledTextureRegion game_enemy_2_region;
+	public ITiledTextureRegion game_enemy_3_region;
+	public ITiledTextureRegion game_enemy_4_region;
 	
 	//Fruits
 	public ITextureRegion game_fruit_1_region;
@@ -81,6 +82,7 @@ public class ResourcesManager {
 
 	//Game Textures
 	private BuildableBitmapTextureAtlas gameTextureAtlas;
+	private BuildableBitmapTextureAtlas animatedTextureAtlas;
 	private BuildableBitmapTextureAtlas gameBackgroundLayer1TextureAtlas;
 	private BuildableBitmapTextureAtlas gameBackgroundLayer2TextureAtlas;
 	private BuildableBitmapTextureAtlas gameBackgroundLayer3TextureAtlas;
@@ -118,6 +120,7 @@ public class ResourcesManager {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
 		
 		gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1500, 1500, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		animatedTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1500, 400, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		gameBackgroundLayer1TextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1600, 1280, TextureOptions.BILINEAR);
 		gameBackgroundLayer2TextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1600, 1280, TextureOptions.BILINEAR);
 		gameBackgroundLayer3TextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1600, 1280, TextureOptions.BILINEAR);
@@ -139,10 +142,12 @@ public class ResourcesManager {
 		
 		game_platform_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_platform.png");
 		game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player.png");
-		game_enemy_1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_1.png");
-		game_enemy_2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_2.png");
-		game_enemy_3_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_3.png");
-		game_enemy_4_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_4.png");
+		
+		//game_enemy_1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_1.png");
+		game_enemy_1_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(animatedTextureAtlas, activity, "game_enemy_1.png", 4, 1);
+		game_enemy_2_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(animatedTextureAtlas, activity, "game_enemy_2.png", 4, 1);
+		game_enemy_3_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(animatedTextureAtlas, activity, "game_enemy_3.png", 4, 1);
+		game_enemy_4_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(animatedTextureAtlas, activity, "game_enemy_4.png", 4, 1);
 		
 		game_fruit_1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_fruit_1.png");
 		game_fruit_2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_fruit_2.png");
@@ -160,13 +165,16 @@ public class ResourcesManager {
 		
 		try {
 			this.gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.animatedTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.gameBackgroundLayer1TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.gameBackgroundLayer2TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.gameBackgroundLayer3TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.gameBackgroundLayer4TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.gameBackgroundLayer5TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.gameBackgroundLayer6TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			
 			this.gameTextureAtlas.load();
+			this.animatedTextureAtlas.load();
 			this.gameBackgroundLayer1TextureAtlas.load();
 			this.gameBackgroundLayer2TextureAtlas.load();
 			this.gameBackgroundLayer3TextureAtlas.load();
@@ -192,6 +200,7 @@ public class ResourcesManager {
 	}
 	
 	private void unloadGameTextures() {
+		this.gameTextureAtlas.unload();
 		this.gameTextureAtlas.unload();
 		this.gameBackgroundLayer1TextureAtlas.unload();
 		this.gameBackgroundLayer2TextureAtlas.unload();

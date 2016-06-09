@@ -1,6 +1,6 @@
 package com.lucianosimo.animaldash.object;
 
-import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
@@ -11,7 +11,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.lucianosimo.animaldash.manager.ResourcesManager;
 
-public class Enemy4 extends Sprite {
+public class Enemy4 extends AnimatedSprite {
 
 	private Body body;
 	private FixtureDef fixture;
@@ -19,6 +19,7 @@ public class Enemy4 extends Sprite {
 	public Enemy4(float pX, float pY, VertexBufferObjectManager vbom, PhysicsWorld physicsWorld) {
 		super(pX, pY, ResourcesManager.getInstance().game_enemy_4_region, vbom);
 		createPhysics(physicsWorld);
+		setIdleState();
 	}
 	
 	private void createPhysics(PhysicsWorld physicsWorld) {
@@ -46,6 +47,11 @@ public class Enemy4 extends Sprite {
 	
 	public String getEnemy4UserData() {
 		return this.getUserData().toString();
+	}
+	
+	public void setIdleState() {
+		final long[] ENEMY_ANIMATE = new long[] {100, 100, 100, 100};
+		animate(ENEMY_ANIMATE, 0, 3, true);
 	}
 
 }
