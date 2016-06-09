@@ -1,6 +1,9 @@
 package com.lucianosimo.animaldash.object;
 
+import java.util.Random;
+
 import org.andengine.engine.camera.Camera;
+import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.RotationModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.sprite.Sprite;
@@ -30,6 +33,7 @@ public abstract class Player extends Sprite{
 	private Rectangle cameraChaseRectangle;
 	private int speedIncrement = 0;
 	private int speedIncrementLimit = 5;
+	private float savedRotation = 0;
 	
 	public abstract void onDie();
 	
@@ -103,8 +107,20 @@ public abstract class Player extends Sprite{
 		}
 	}
 	
-	public void jump(int jumpFactor) {
-		playerBody.setLinearVelocity(new Vector2(playerBody.getLinearVelocity().x, jumpFactor * 10));
-		this.registerEntityModifier(new RotationModifier(jumpFactor, 0, jumpFactor * 180));
+	public void jump() {
+		//playerBody.setLinearVelocity(new Vector2(playerBody.getLinearVelocity().x, jumpFactor * 10));
+		//this.registerEntityModifier(new RotationModifier(jumpFactor, 0, jumpFactor * 180));
+		Random rand = new Random();
+		int jumpRotation = rand.nextInt(7 - 5 + 1) + 5;
+		
+		playerBody.setLinearVelocity(new Vector2(4, 2 * 10));
+		//this.registerEntityModifier(new RotationModifier(2, 0, jumpRotation * 90));
+		this.registerEntityModifier(new RotationModifier(2, savedRotation, savedRotation + jumpRotation * 90) {
+			@Override
+			protected void onModifierFinished(IEntity pItem) {
+				super.onModifierFinished(pItem);
+				savedRotation = Player.this.getRotation();
+			}
+		});
 	}
 }

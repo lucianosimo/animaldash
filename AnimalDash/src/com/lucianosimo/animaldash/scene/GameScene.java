@@ -61,7 +61,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	private Sprite[] fruits;
 	private final static int FRUITS_INITIAL_X = 2000;
 	private final static int FRUITS_BETWEEN_DISTANCE = 2000;
-	private final static int FRUITS_CENTER_SCREEN_OFFSET_Y = 200;
+	private final static int FRUITS_CENTER_SCREEN_OFFSET_Y = 350;
 	private final static int FRUITS_QUANTITY = 4;
 	
 	private Platform[] platforms;
@@ -363,7 +363,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 								|| enableButton(enemy1[3].getX(), player.getX()))) {
 					
 					pressedButtonCounter++;
-					player.jump(1);
+					player.jump();
 					
 				}
 				return false;
@@ -379,7 +379,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 								|| enableButton(enemy2[3].getX(), player.getX()))) {
 					
 					pressedButtonCounter++;
-					player.jump(2);
+					player.jump();
 					
 				}
 				return false;
@@ -395,7 +395,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 								|| enableButton(enemy3[3].getX(), player.getX()))) {
 					
 					pressedButtonCounter++;
-					player.jump(3);
+					player.jump();
 					
 				}
 				return false;
@@ -411,7 +411,7 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 								|| enableButton(enemy4[3].getX(), player.getX()))) {
 					
 					pressedButtonCounter++;
-					player.jump(4);
+					player.jump();
 					
 				}
 				return false;
