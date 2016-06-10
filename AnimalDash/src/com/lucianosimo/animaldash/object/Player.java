@@ -21,9 +21,18 @@ import com.lucianosimo.animaldash.manager.ResourcesManager;
 public abstract class Player extends Sprite{
 
 	private final static int PLAYER_INITIAL_SPEED = 5;
+	private final static int PLAYER_JUMP_SPEED_X = 5;
+	private final static int PLAYER_JUMP_SPEED_Y = 25;
+	//private final static int PLAYER_JUMP_SPEED_Y = 20;
+	
 	private final static int CAMERA_CHASE_RECTANGLE_WIDTH = 128;
 	private final static int CAMERA_CHASE_RECTANGLE_HEIGHT = 128;
 	private final static int CAMERA_CHASE_PLAYER_DISTANCE = 450;
+	
+	private final static float SCALE_FACTOR = 1.85f;
+	private final static int ROTATION_DEGREES = 90;
+	private final static int ROTATION_FACTOR_MAX = 7;
+	private final static int ROTATION_FACTOR_MIN = 5;
 	
 	private Body playerBody;
 	private FixtureDef playerFixture;
@@ -31,9 +40,13 @@ public abstract class Player extends Sprite{
 	private Body cameraChaseBody;
 	private FixtureDef cameraChaseFixture;
 	private Rectangle cameraChaseRectangle;
+	
 	private int speedIncrement = 0;
 	private int speedIncrementLimit = 5;
 	private float savedRotation = 0;
+	
+	private boolean isAlive = true;
+	private boolean isInPowerUpMode = false;
 	
 	public abstract void onDie();
 	
@@ -48,7 +61,6 @@ public abstract class Player extends Sprite{
 	
 	private void createPlayerPhysics(PhysicsWorld physicsWorld) {
 		playerFixture = PhysicsFactory.createFixtureDef(0, 0, 0);
-		playerFixture.filter.groupIndex = -1;
 		
 		playerBody = PhysicsFactory.createCircleBody(physicsWorld, this, BodyType.DynamicBody, playerFixture);
 		
@@ -108,14 +120,48 @@ public abstract class Player extends Sprite{
 	}
 	
 	public void jump() {
-		//playerBody.setLinearVelocity(new Vector2(playerBody.getLinearVelocity().x, jumpFactor * 10));
-		//this.registerEntityModifier(new RotationModifier(jumpFactor, 0, jumpFactor * 180));
 		Random rand = new Random();
-		int jumpRotation = rand.nextInt(7 - 5 + 1) + 5;
+		int jumpRotation = rand.nextInt(ROTATION_FACTOR_MAX - ROTATION_FACTOR_MIN + 1) + ROTATION_FACTOR_MIN;
 		
-		playerBody.setLinearVelocity(new Vector2(4, 2 * 10));
-		//this.registerEntityModifier(new RotationModifier(2, 0, jumpRotation * 90));
-		this.registerEntityModifier(new RotationModifier(2, savedRotation, savedRotation + jumpRotation * 90) {
+		playerBody.setLinearVelocity(new Vector2(PLAYER_JUMP_SPEED_X, PLAYER_JUMP_SPEED_Y));
+		
+		this.registerEntityModifier(new RotationModifier(2, savedRotation, savedRotation + jumpRotation * ROTATION_DEGREES) {
+			@Override
+			protected void onModifierFinished(IEntity pItem) {
+				super.onModifierFinished(pItem);
+				savedRotation = Player.this.getRotation();
+			}
+		});
+	}
+	
+	public void setPowerUp() {
+		isInPowerUpMode = true;
+		this.setScale(SCALE_FACTOR);
+		playerBody.getFixtureList().get(0).getShape().setRadius(playerBody.getFixtureList().get(0).getShape().getRadius() * SCALE_FACTOR);
+	}
+	
+	public void unsetPowerUp() {
+		isInPowerUpMode = false;
+		this.setScale(1);
+		playerBody.getFixtureList().get(0).getShape().setRadius(playerBody.getFixtureList().get(0).getShape().getRadius() * 1/SCALE_FACTOR);
+	}
+	
+	public boolean isPlayerAlive() {
+		return isAlive;
+	}
+	
+	public boolean isPlayerInPowerUpMode() {
+		return isInPowerUpMode;
+	}
+	
+	public void killPlayer() {
+		speedIncrement = -PLAYER_INITIAL_SPEED;
+		isAlive = false;
+		
+		playerBody.setLinearVelocity(new Vector2(playerBody.getLinearVelocity().x, PLAYER_JUMP_SPEED_Y));
+		playerBody.getFixtureList().get(0).setSensor(true);
+		
+		this.registerEntityModifier(new RotationModifier(3, savedRotation, savedRotation + 12 * ROTATION_DEGREES) {
 			@Override
 			protected void onModifierFinished(IEntity pItem) {
 				super.onModifierFinished(pItem);

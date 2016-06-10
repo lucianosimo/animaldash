@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.Random;
 
 import org.andengine.engine.camera.hud.HUD;
+import org.andengine.entity.IEntity;
+import org.andengine.entity.modifier.DelayModifier;
+import org.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.AutoParallaxBackground;
@@ -15,11 +18,13 @@ import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.util.modifier.IModifier;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.lucianosimo.animaldash.base.BaseScene;
 import com.lucianosimo.animaldash.manager.SceneManager.SceneType;
@@ -30,7 +35,7 @@ import com.lucianosimo.animaldash.object.Enemy4;
 import com.lucianosimo.animaldash.object.Platform;
 import com.lucianosimo.animaldash.object.Player;
 
-public class GameScene extends BaseScene  implements IOnSceneTouchListener {
+public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	
 	//Scene indicators
 	private HUD gameHud;
@@ -59,10 +64,14 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 	
 	//Fruits
 	private Sprite[] fruits;
+	private int fruitsCounter;
 	private final static int FRUITS_INITIAL_X = 2000;
 	private final static int FRUITS_BETWEEN_DISTANCE = 2000;
 	private final static int FRUITS_CENTER_SCREEN_OFFSET_Y = 350;
 	private final static int FRUITS_QUANTITY = 4;
+	
+	private final static int POWER_UP_REQUIRED_FRUITS = 2;
+	private final static int POWER_UP_DURATION = 15;
 	
 	private Platform[] platforms;
 	
@@ -470,6 +479,34 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 					super.onManagedUpdate(pSecondsElapsed);
 					if (player.collidesWith(this)) {
 						this.setX(this.getX() + FRUITS_BETWEEN_DISTANCE * FRUITS_QUANTITY);
+						fruitsCounter++;
+						if (fruitsCounter == POWER_UP_REQUIRED_FRUITS) {
+							
+							player.registerEntityModifier(new DelayModifier(POWER_UP_DURATION, new IEntityModifierListener() {
+								
+								@Override
+								public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
+									player.setPowerUp();
+									for (int i = 0; i < ENEMIES_QUANTITY / 4; i++) {
+										enemy1[i].getEnemy1Body().setActive(false);
+										enemy2[i].getEnemy2Body().setActive(false);
+										enemy3[i].getEnemy3Body().setActive(false);
+										enemy4[i].getEnemy4Body().setActive(false);
+									}
+								}
+								
+								public void onModifierFinished(org.andengine.util.modifier.IModifier<IEntity> pModifier, IEntity pItem) {
+									player.unsetPowerUp();
+									for (int i = 0; i < ENEMIES_QUANTITY / 4; i++) {
+										enemy1[i].getEnemy1Body().setActive(true);
+										enemy2[i].getEnemy2Body().setActive(true);
+										enemy3[i].getEnemy3Body().setActive(true);
+										enemy4[i].getEnemy4Body().setActive(true);
+									}
+									fruitsCounter = 0;
+								};
+							}));
+						}
 					}
 				}
 			};
@@ -506,8 +543,24 @@ public class GameScene extends BaseScene  implements IOnSceneTouchListener {
 			
 			@Override
 			public void beginContact(Contact contact) {
-				//final Fixture x1 = contact.getFixtureA();
-				//final Fixture x2 = contact.getFixtureB();
+				final Fixture x1 = contact.getFixtureA();
+				final Fixture x2 = contact.getFixtureB();
+				
+				if (x1.getBody().getUserData().equals("enemy1") && x2.getBody().getUserData().equals("player") && player.isPlayerAlive() && !player.isPlayerInPowerUpMode()) {
+					player.killPlayer();
+				}
+				
+				if (x1.getBody().getUserData().equals("enemy2") && x2.getBody().getUserData().equals("player") && player.isPlayerAlive() && !player.isPlayerInPowerUpMode()) {
+					player.killPlayer();
+				}
+				
+				if (x1.getBody().getUserData().equals("enemy3") && x2.getBody().getUserData().equals("player") && player.isPlayerAlive() && !player.isPlayerInPowerUpMode()) {
+					player.killPlayer();
+				}
+				
+				if (x1.getBody().getUserData().equals("enemy4") && x2.getBody().getUserData().equals("player") && player.isPlayerAlive() && !player.isPlayerInPowerUpMode()) {
+					player.killPlayer();
+				}
 			}
 		};
 		return contactListener;
