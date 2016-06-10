@@ -233,6 +233,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			}
 		};
 		
+		player.setZIndex(1000);
+		
 		GameScene.this.attachChild(player);
 		GameScene.this.attachChild(player.getCameraChaseRectangle());
 	}
@@ -294,7 +296,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			
 			long seed = System.nanoTime();
 			Collections.shuffle(enemiesPositions, new Random(seed));
-			//Collections.sort(enemiesPositions);
 			
 			enemy1[i] = new Enemy1(enemiesPositions.get(0) + i * ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY / ENEMY_1_QUANTITY,  screenHeight/2 + ENEMY_CENTER_OFFSET_Y, vbom, physicsWorld) {
 				@Override
@@ -353,11 +354,19 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 				}
 			};
 			
+			enemy1[i].setZIndex(1);
+			enemy2[i].setZIndex(1);
+			enemy3[i].setZIndex(1);
+			enemy4[i].setZIndex(1);
+			
 			GameScene.this.attachChild(enemy1[i]);
 			GameScene.this.attachChild(enemy2[i]);
 			GameScene.this.attachChild(enemy3[i]);
 			GameScene.this.attachChild(enemy4[i]);
+			
 		}
+		
+		GameScene.this.sortChildren();
 
 	}
 	
@@ -548,18 +557,22 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 				
 				if (x1.getBody().getUserData().equals("enemy1") && x2.getBody().getUserData().equals("player") && player.isPlayerAlive() && !player.isPlayerInPowerUpMode()) {
 					player.killPlayer();
+					autoParallaxBackground.setParallaxChangePerSecond(0);
 				}
 				
 				if (x1.getBody().getUserData().equals("enemy2") && x2.getBody().getUserData().equals("player") && player.isPlayerAlive() && !player.isPlayerInPowerUpMode()) {
 					player.killPlayer();
+					autoParallaxBackground.setParallaxChangePerSecond(0);
 				}
 				
 				if (x1.getBody().getUserData().equals("enemy3") && x2.getBody().getUserData().equals("player") && player.isPlayerAlive() && !player.isPlayerInPowerUpMode()) {
 					player.killPlayer();
+					autoParallaxBackground.setParallaxChangePerSecond(0);
 				}
 				
 				if (x1.getBody().getUserData().equals("enemy4") && x2.getBody().getUserData().equals("player") && player.isPlayerAlive() && !player.isPlayerInPowerUpMode()) {
 					player.killPlayer();
+					autoParallaxBackground.setParallaxChangePerSecond(0);
 				}
 			}
 		};
