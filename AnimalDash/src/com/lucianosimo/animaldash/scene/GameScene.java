@@ -19,6 +19,7 @@ import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.util.adt.color.Color;
 import org.andengine.util.modifier.IModifier;
 
 import com.badlogic.gdx.math.Vector2;
@@ -51,12 +52,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	//HUD sprites
 	private Sprite game_hud_background;
 	private Rectangle game_hud_powerup_empty_background;
+	private Rectangle game_hud_powerup_bar;
 	private Sprite game_hud_powerup_background;
 	private Sprite game_hud_small_player;
 	private Sprite game_hud_big_player;
 	
-	private final static int HUD_POWERUP_EMPTY_BACKGROUND_WIDTH = 450;
-	private final static int HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT = 80;
+	private final static int HUD_POWERUP_EMPTY_BACKGROUND_WIDTH = 350;
+	private final static int HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT = 75;
 	
 	//Constants	
 	private float screenWidth;
@@ -75,10 +77,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private int fruitsCounter;
 	private final static int FRUITS_INITIAL_X = 2000;
 	private final static int FRUITS_BETWEEN_DISTANCE = 2000;
-	private final static int FRUITS_CENTER_SCREEN_OFFSET_Y = 250;
+	private final static int FRUITS_CENTER_SCREEN_OFFSET_Y = 350;
 	private final static int FRUITS_QUANTITY = 4;
 	
-	private final static int POWER_UP_REQUIRED_FRUITS = 2;
+	private final static int POWER_UP_REQUIRED_FRUITS = 4;
 	private final static int POWER_UP_DURATION = 15;
 	
 	private Platform[] platforms;
@@ -254,13 +256,15 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		
 		game_hud_small_player = new Sprite(screenWidth / 2 - 300, screenHeight - 175, resourcesManager.game_player_region, vbom);
 		game_hud_big_player = new Sprite(screenWidth / 2 + 300, screenHeight - 175, resourcesManager.game_player_region, vbom);
-		game_hud_powerup_empty_background = new Rectangle(screenWidth / 2, screenHeight - 175, HUD_POWERUP_EMPTY_BACKGROUND_WIDTH, HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT, vbom);
+		game_hud_powerup_empty_background = new Rectangle(screenWidth / 2 + 7, screenHeight - 175, HUD_POWERUP_EMPTY_BACKGROUND_WIDTH, HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT, vbom);
+		game_hud_powerup_bar = new Rectangle(screenWidth / 2, screenHeight - 175, 0, HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT, vbom);
 		game_hud_powerup_background = new Sprite(screenWidth / 2, screenHeight - 175, resourcesManager.game_hud_powerup_background_region, vbom);
 		
 		game_hud_background = new Sprite(screenWidth / 2, screenHeight / 2 - 400, resourcesManager.game_hud_background_region, vbom);
 		
 		game_hud_small_player.setScale(0.6f);
 		game_hud_big_player.setScale(0.85f);
+		game_hud_powerup_bar.setColor(Color.GREEN);
 		
 		menu_play_button = new Sprite(screenWidth / 2, screenHeight / 2, resourcesManager.game_menu_play_button_region, vbom) {
 			@Override
@@ -280,6 +284,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 							gameHud.unregisterTouchArea(game_hud_powerup_background);
 							
 							gameHud.attachChild(game_hud_powerup_empty_background);
+							gameHud.attachChild(game_hud_powerup_bar);
 							gameHud.attachChild(game_hud_powerup_background);
 							gameHud.attachChild(game_hud_small_player);
 							gameHud.attachChild(game_hud_big_player);
@@ -511,6 +516,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					if (player.collidesWith(this)) {
 						this.setX(this.getX() + FRUITS_BETWEEN_DISTANCE * FRUITS_QUANTITY);
 						fruitsCounter++;
+						increasePowerUpBar();
+						
 						if (fruitsCounter == POWER_UP_REQUIRED_FRUITS) {
 							
 							player.registerEntityModifier(new DelayModifier(POWER_UP_DURATION, new IEntityModifierListener() {
@@ -544,6 +551,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			
 			GameScene.this.attachChild(fruits[i]);
 		}
+	}
+	
+	private void increasePowerUpBar() {
+		game_hud_powerup_bar.setWidth(HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / POWER_UP_REQUIRED_FRUITS * fruitsCounter);
+		game_hud_powerup_bar.setPosition((game_hud_powerup_empty_background.getX() - HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / 2 - game_hud_powerup_bar.getWidth()) 
+				+ game_hud_powerup_bar.getWidth(), 
+				game_hud_powerup_bar.getY());
 	}
 	
 	private boolean enableButton(float enemyX, float playerX) {
