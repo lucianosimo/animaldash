@@ -8,6 +8,7 @@ import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.DelayModifier;
 import org.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
+import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.AutoParallaxBackground;
@@ -49,6 +50,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	
 	//HUD sprites
 	private Sprite game_hud_background;
+	private Rectangle game_hud_powerup_empty_background;
+	private Sprite game_hud_powerup_background;
+	private Sprite game_hud_small_player;
+	private Sprite game_hud_big_player;
+	
+	private final static int HUD_POWERUP_EMPTY_BACKGROUND_WIDTH = 450;
+	private final static int HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT = 80;
 	
 	//Constants	
 	private float screenWidth;
@@ -67,7 +75,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private int fruitsCounter;
 	private final static int FRUITS_INITIAL_X = 2000;
 	private final static int FRUITS_BETWEEN_DISTANCE = 2000;
-	private final static int FRUITS_CENTER_SCREEN_OFFSET_Y = 350;
+	private final static int FRUITS_CENTER_SCREEN_OFFSET_Y = 250;
 	private final static int FRUITS_QUANTITY = 4;
 	
 	private final static int POWER_UP_REQUIRED_FRUITS = 2;
@@ -242,8 +250,17 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private void createMenu() {
 		gameHud = new HUD();
 		
-		game_hud_background = new Sprite(screenWidth / 2, screenHeight / 2 - 400, resourcesManager.game_hud_background_region, vbom);
 		menu_title = new Sprite(screenWidth / 2, screenHeight - 300, resourcesManager.game_menu_title_region, vbom);
+		
+		game_hud_small_player = new Sprite(screenWidth / 2 - 300, screenHeight - 175, resourcesManager.game_player_region, vbom);
+		game_hud_big_player = new Sprite(screenWidth / 2 + 300, screenHeight - 175, resourcesManager.game_player_region, vbom);
+		game_hud_powerup_empty_background = new Rectangle(screenWidth / 2, screenHeight - 175, HUD_POWERUP_EMPTY_BACKGROUND_WIDTH, HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT, vbom);
+		game_hud_powerup_background = new Sprite(screenWidth / 2, screenHeight - 175, resourcesManager.game_hud_powerup_background_region, vbom);
+		
+		game_hud_background = new Sprite(screenWidth / 2, screenHeight / 2 - 400, resourcesManager.game_hud_background_region, vbom);
+		
+		game_hud_small_player.setScale(0.6f);
+		game_hud_big_player.setScale(0.85f);
 		
 		menu_play_button = new Sprite(screenWidth / 2, screenHeight / 2, resourcesManager.game_menu_play_button_region, vbom) {
 			@Override
@@ -260,7 +277,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 						public void run() {
 							gameHud.detachChild(menu_title);
 							gameHud.detachChild(menu_play_button);
-							gameHud.unregisterTouchArea(menu_play_button);
+							gameHud.unregisterTouchArea(game_hud_powerup_background);
+							
+							gameHud.attachChild(game_hud_powerup_empty_background);
+							gameHud.attachChild(game_hud_powerup_background);
+							gameHud.attachChild(game_hud_small_player);
+							gameHud.attachChild(game_hud_big_player);
 						}
 					});
 					gameStarted = true;

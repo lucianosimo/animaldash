@@ -37,6 +37,7 @@ public class ResourcesManager {
 	
 	//Game HUD
 	public ITextureRegion game_hud_background_region;
+	public ITextureRegion game_hud_powerup_background_region;
 	
 	//Players
 	public ITextureRegion game_player_region;
@@ -82,6 +83,7 @@ public class ResourcesManager {
 
 	//Game Textures
 	private BuildableBitmapTextureAtlas gameTextureAtlas;
+	private BuildableBitmapTextureAtlas gameHudTextureAtlas;
 	private BuildableBitmapTextureAtlas animatedTextureAtlas;
 	private BuildableBitmapTextureAtlas gameBackgroundLayer1TextureAtlas;
 	private BuildableBitmapTextureAtlas gameBackgroundLayer2TextureAtlas;
@@ -120,6 +122,7 @@ public class ResourcesManager {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
 		
 		gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1500, 1500, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		gameHudTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1500, 1500, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		animatedTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1500, 400, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		gameBackgroundLayer1TextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1600, 1280, TextureOptions.BILINEAR);
 		gameBackgroundLayer2TextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1600, 1280, TextureOptions.BILINEAR);
@@ -135,7 +138,8 @@ public class ResourcesManager {
 		game_background_1_layer_5_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameBackgroundLayer5TextureAtlas, activity, "game_background_1_layer_5.png");
 		game_background_1_layer_6_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameBackgroundLayer6TextureAtlas, activity, "game_background_1_layer_6.png");
 		
-		game_hud_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_hud_background.png");
+		game_hud_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameHudTextureAtlas, activity, "game_hud_background.png");
+		game_hud_powerup_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameHudTextureAtlas, activity, "game_hud_powerup_background.png");
 		
 		game_menu_title_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_menu_title.png");
 		game_menu_play_button_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_menu_play_button.png");
@@ -165,6 +169,7 @@ public class ResourcesManager {
 		
 		try {
 			this.gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.gameHudTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.animatedTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.gameBackgroundLayer1TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.gameBackgroundLayer2TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
@@ -174,6 +179,7 @@ public class ResourcesManager {
 			this.gameBackgroundLayer6TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			
 			this.gameTextureAtlas.load();
+			this.gameHudTextureAtlas.load();
 			this.animatedTextureAtlas.load();
 			this.gameBackgroundLayer1TextureAtlas.load();
 			this.gameBackgroundLayer2TextureAtlas.load();
@@ -201,7 +207,8 @@ public class ResourcesManager {
 	
 	private void unloadGameTextures() {
 		this.gameTextureAtlas.unload();
-		this.gameTextureAtlas.unload();
+		this.gameHudTextureAtlas.unload();
+		this.animatedTextureAtlas.unload();
 		this.gameBackgroundLayer1TextureAtlas.unload();
 		this.gameBackgroundLayer2TextureAtlas.unload();
 		this.gameBackgroundLayer3TextureAtlas.unload();
