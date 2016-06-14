@@ -264,7 +264,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		
 		game_hud_small_player.setScale(0.6f);
 		game_hud_big_player.setScale(0.85f);
-		game_hud_powerup_bar.setColor(Color.GREEN);
+		//game_hud_powerup_bar.setColor(70, 165, 3);
+		game_hud_powerup_bar.setColor(0.275f, 0.647f, 0.012f);
 		
 		menu_play_button = new Sprite(screenWidth / 2, screenHeight / 2, resourcesManager.game_menu_play_button_region, vbom) {
 			@Override
@@ -555,8 +556,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	
 	private void increasePowerUpBar() {
 		game_hud_powerup_bar.setWidth(HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / POWER_UP_REQUIRED_FRUITS * fruitsCounter);
-		game_hud_powerup_bar.setPosition((game_hud_powerup_empty_background.getX() - HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / 2 - game_hud_powerup_bar.getWidth()) 
-				+ game_hud_powerup_bar.getWidth(), 
+		game_hud_powerup_bar.setPosition((game_hud_powerup_empty_background.getX() - HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / 2) + game_hud_powerup_bar.getWidth() / 2, 
 				game_hud_powerup_bar.getY());
 	}
 	
