@@ -19,7 +19,6 @@ import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITextureRegion;
-import org.andengine.util.adt.color.Color;
 import org.andengine.util.modifier.IModifier;
 
 import com.badlogic.gdx.math.Vector2;
@@ -57,7 +56,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private Sprite game_hud_small_player;
 	private Sprite game_hud_big_player;
 	
-	private final static int HUD_POWERUP_EMPTY_BACKGROUND_WIDTH = 350;
+	private final static int HUD_POWERUP_EMPTY_BACKGROUND_WIDTH = 365;
 	private final static int HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT = 75;
 	
 	//Constants	
@@ -75,13 +74,19 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	//Fruits
 	private Sprite[] fruits;
 	private int fruitsCounter;
+	private DelayModifier powerUpBarDecreaseModifier;
+	private boolean decreasingPowerUpBar;
+	//private float increaseBarCounter = 0;
+	//private IUpdateHandler increaseBarUpdateHandler;
+	
 	private final static int FRUITS_INITIAL_X = 2000;
 	private final static int FRUITS_BETWEEN_DISTANCE = 2000;
 	private final static int FRUITS_CENTER_SCREEN_OFFSET_Y = 350;
 	private final static int FRUITS_QUANTITY = 4;
 	
 	private final static int POWER_UP_REQUIRED_FRUITS = 4;
-	private final static int POWER_UP_DURATION = 15;
+	private final static float POWER_UP_DURATION = 15;
+	//private final static int POWER_UP_BAR_INCREASE_DURATION = 1;
 	
 	private Platform[] platforms;
 	
@@ -221,6 +226,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	}
 	
 	private void createPlayer() {
+		decreasingPowerUpBar = false;
+		
 		player = new Player(screenWidth/2, screenHeight/2 + 200, vbom, camera, physicsWorld) {
 			@Override
 			protected void onManagedUpdate(float pSecondsElapsed) {
@@ -236,6 +243,34 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					}
 					
 				}
+				
+				if (player.isPlayerInPowerUpMode() && !decreasingPowerUpBar) {
+					decreasingPowerUpBar = true;
+					
+					powerUpBarDecreaseModifier = new DelayModifier(POWER_UP_DURATION / POWER_UP_REQUIRED_FRUITS , new IEntityModifierListener() {
+						
+						@Override
+						public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
+							
+						}
+						
+						public void onModifierFinished(org.andengine.util.modifier.IModifier<IEntity> pModifier, IEntity pItem) {
+							fruitsCounter--;
+							resizePowerUpBar();
+							decreasingPowerUpBar = false;
+							
+							if (fruitsCounter > 0) {
+								player.registerEntityModifier(powerUpBarDecreaseModifier);
+							}
+						};
+					});
+					
+					if (fruitsCounter > 0) {
+						player.registerEntityModifier(powerUpBarDecreaseModifier);
+					}
+					
+				}
+				
 			}
 			@Override
 			public void onDie() {
@@ -516,11 +551,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					super.onManagedUpdate(pSecondsElapsed);
 					if (player.collidesWith(this)) {
 						this.setX(this.getX() + FRUITS_BETWEEN_DISTANCE * FRUITS_QUANTITY);
-						fruitsCounter++;
-						increasePowerUpBar();
+						
+						if (!player.isPlayerInPowerUpMode()) {
+							fruitsCounter++;
+							resizePowerUpBar();
+						}
 						
 						if (fruitsCounter == POWER_UP_REQUIRED_FRUITS) {
-							
 							player.registerEntityModifier(new DelayModifier(POWER_UP_DURATION, new IEntityModifierListener() {
 								
 								@Override
@@ -542,10 +579,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 										enemy3[i].getEnemy3Body().setActive(true);
 										enemy4[i].getEnemy4Body().setActive(true);
 									}
-									fruitsCounter = 0;
 								};
 							}));
 						}
+							
 					}
 				}
 			};
@@ -554,7 +591,42 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		}
 	}
 	
-	private void increasePowerUpBar() {
+	private void resizePowerUpBar() {
+		/*player.registerEntityModifier(new DelayModifier(POWER_UP_BAR_IMCREASE_DURATION, new IEntityModifierListener() {
+			
+			@Override
+			public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
+				increaseBarUpdateHandler = new IUpdateHandler() {
+					 
+					
+					@Override
+					public void reset() {
+						
+					}
+					
+					@Override
+					public void onUpdate(float pSecondsElapsed) {
+						//increaseBarCounter = increaseBarCounter + 0.0085f;
+						increaseBarCounter = increaseBarCounter + 0.017f;
+						game_hud_powerup_bar.setWidth(HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / POWER_UP_REQUIRED_FRUITS * 1 * increaseBarCounter);
+						game_hud_powerup_bar.setPosition((game_hud_powerup_empty_background.getX() - HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / 2) + game_hud_powerup_bar.getWidth() / 2, 
+								game_hud_powerup_bar.getY());
+						
+					}
+				};
+				
+				engine.registerUpdateHandler(increaseBarUpdateHandler);
+			}
+			
+			@Override
+			public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {				
+				game_hud_powerup_bar.setWidth(HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / POWER_UP_REQUIRED_FRUITS * fruitsCounter);
+				game_hud_powerup_bar.setPosition((game_hud_powerup_empty_background.getX() - HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / 2) + game_hud_powerup_bar.getWidth() / 2, 
+						game_hud_powerup_bar.getY());
+				//increaseBarCounter = 0;
+				engine.unregisterUpdateHandler(increaseBarUpdateHandler);
+			}
+		}));*/
 		game_hud_powerup_bar.setWidth(HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / POWER_UP_REQUIRED_FRUITS * fruitsCounter);
 		game_hud_powerup_bar.setPosition((game_hud_powerup_empty_background.getX() - HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / 2) + game_hud_powerup_bar.getWidth() / 2, 
 				game_hud_powerup_bar.getY());
