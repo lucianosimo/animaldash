@@ -8,6 +8,7 @@ import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.DelayModifier;
 import org.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
+import org.andengine.entity.modifier.MoveModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
@@ -20,6 +21,9 @@ import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.util.modifier.IModifier;
+import org.andengine.util.modifier.ease.EaseElasticInOut;
+import org.andengine.util.modifier.ease.EaseElasticOut;
+import org.andengine.util.modifier.ease.IEaseFunction;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -157,6 +161,17 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private final static int CAMERA_BOUND_Y_MAX = 1280;
 	
 	private final static int PLATFORM_CENTER_OFFSET_Y = -110;
+	private final static int MENU_TITLE_OFFSET_Y = -200;
+	private final static int MENU_PLAY_BUTTON_OFFSET_Y = 50;
+	//private final static int MENU_POWERUP_HUD_ITEMS_OFFSET_Y = -175;
+	private final static int MENU_POWERUP_HUD_ITEMS_OFFSET_Y = -550;
+	
+	//Ease functions
+	private static final IEaseFunction[][] EASEFUNCTIONS = new IEaseFunction[][] {
+		new IEaseFunction[] { 
+				EaseElasticInOut.getInstance(),
+				EaseElasticOut.getInstance()},
+	};
 	
 	//If negative, never collides between groups, if positive yes
 	//private static final int GROUP_ENEMY = -1;
@@ -287,13 +302,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private void createMenu() {
 		gameHud = new HUD();
 		
-		menu_title = new Sprite(screenWidth / 2, screenHeight - 300, resourcesManager.game_menu_title_region, vbom);
+		menu_title = new Sprite(screenWidth / 2, screenHeight + MENU_TITLE_OFFSET_Y, resourcesManager.game_menu_title_region, vbom);
 		
-		game_hud_small_player = new Sprite(screenWidth / 2 - 300, screenHeight - 175, resourcesManager.game_player_region, vbom);
-		game_hud_big_player = new Sprite(screenWidth / 2 + 300, screenHeight - 175, resourcesManager.game_player_region, vbom);
-		game_hud_powerup_empty_background = new Rectangle(screenWidth / 2 + 7, screenHeight - 175, HUD_POWERUP_EMPTY_BACKGROUND_WIDTH, HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT, vbom);
-		game_hud_powerup_bar = new Rectangle(screenWidth / 2, screenHeight - 175, 0, HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT, vbom);
-		game_hud_powerup_background = new Sprite(screenWidth / 2, screenHeight - 175, resourcesManager.game_hud_powerup_background_region, vbom);
+		game_hud_small_player = new Sprite(screenWidth / 2 - 300, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_player_region, vbom);
+		game_hud_big_player = new Sprite(screenWidth / 2 + 300, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_player_region, vbom);
+		game_hud_powerup_empty_background = new Rectangle(screenWidth / 2 + 7, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, HUD_POWERUP_EMPTY_BACKGROUND_WIDTH, HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT, vbom);
+		game_hud_powerup_bar = new Rectangle(screenWidth / 2, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, 0, HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT, vbom);
+		game_hud_powerup_background = new Sprite(screenWidth / 2, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_hud_powerup_background_region, vbom);
 		
 		game_hud_background = new Sprite(screenWidth / 2, screenHeight / 2 - 400, resourcesManager.game_hud_background_region, vbom);
 		
@@ -302,7 +317,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		//game_hud_powerup_bar.setColor(70, 165, 3);
 		game_hud_powerup_bar.setColor(0.275f, 0.647f, 0.012f);
 		
-		menu_play_button = new Sprite(screenWidth / 2, screenHeight / 2, resourcesManager.game_menu_play_button_region, vbom) {
+		menu_play_button = new Sprite(screenWidth / 2, screenHeight / 2 + MENU_PLAY_BUTTON_OFFSET_Y, resourcesManager.game_menu_play_button_region, vbom) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown() && !gameStarted) {
@@ -315,15 +330,34 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 						
 						@Override
 						public void run() {
-							gameHud.detachChild(menu_title);
-							gameHud.detachChild(menu_play_button);
-							gameHud.unregisterTouchArea(game_hud_powerup_background);
+							final IEaseFunction[] easeFunction = EASEFUNCTIONS[0];
 							
-							gameHud.attachChild(game_hud_powerup_empty_background);
+							menu_title.registerEntityModifier(new MoveModifier(200, menu_title.getX(), 
+									menu_title.getY(), menu_title.getX(), menu_title.getY() + 375, easeFunction[0]) {
+								protected void onModifierFinished(IEntity pItem) {
+									game_hud_powerup_empty_background.registerEntityModifier(new MoveModifier(200, game_hud_powerup_empty_background.getX(), 
+											game_hud_powerup_empty_background.getY(), game_hud_powerup_empty_background.getX(), game_hud_powerup_empty_background.getY() - 375, easeFunction[1]));
+									game_hud_powerup_bar.registerEntityModifier(new MoveModifier(200, game_hud_powerup_bar.getX(), 
+											game_hud_powerup_bar.getY(), game_hud_powerup_bar.getX(), game_hud_powerup_bar.getY() - 375, easeFunction[1]));
+									game_hud_powerup_background.registerEntityModifier(new MoveModifier(200, game_hud_powerup_background.getX(), 
+											game_hud_powerup_background.getY(), game_hud_powerup_background.getX(), game_hud_powerup_background.getY() - 375, easeFunction[1]));
+									game_hud_small_player.registerEntityModifier(new MoveModifier(200, game_hud_small_player.getX(), 
+											game_hud_small_player.getY(), game_hud_small_player.getX(), game_hud_small_player.getY() - 375, easeFunction[1]));
+									game_hud_big_player.registerEntityModifier(new MoveModifier(200, game_hud_big_player.getX(), 
+											game_hud_big_player.getY(), game_hud_big_player.getX(), game_hud_big_player.getY() - 375, easeFunction[1]));
+								};
+							});
+							
+							//gameHud.detachChild(menu_title);
+							gameHud.detachChild(menu_play_button);
+							//gameHud.unregisterTouchArea(game_hud_powerup_background);
+							gameHud.unregisterTouchArea(menu_play_button);
+							
+							/*gameHud.attachChild(game_hud_powerup_empty_background);
 							gameHud.attachChild(game_hud_powerup_bar);
 							gameHud.attachChild(game_hud_powerup_background);
 							gameHud.attachChild(game_hud_small_player);
-							gameHud.attachChild(game_hud_big_player);
+							gameHud.attachChild(game_hud_big_player);*/
 						}
 					});
 					gameStarted = true;
@@ -337,6 +371,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		gameHud.attachChild(menu_play_button);
 		gameHud.attachChild(game_hud_background);
 		gameHud.registerTouchArea(menu_play_button);
+		
+		gameHud.attachChild(game_hud_powerup_empty_background);
+		gameHud.attachChild(game_hud_powerup_bar);
+		gameHud.attachChild(game_hud_powerup_background);
+		gameHud.attachChild(game_hud_small_player);
+		gameHud.attachChild(game_hud_big_player);
 		
 		camera.setHUD(gameHud);
 		
