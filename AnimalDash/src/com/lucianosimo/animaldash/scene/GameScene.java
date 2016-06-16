@@ -164,7 +164,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private final static int MENU_TITLE_OFFSET_Y = -200;
 	private final static int MENU_PLAY_BUTTON_OFFSET_Y = 50;
 	//private final static int MENU_POWERUP_HUD_ITEMS_OFFSET_Y = -175;
-	private final static int MENU_POWERUP_HUD_ITEMS_OFFSET_Y = -550;
+	private final static int MENU_POWERUP_HUD_ITEMS_OFFSET_Y = 200;
 	
 	//Ease functions
 	private static final IEaseFunction[][] EASEFUNCTIONS = new IEaseFunction[][] {
