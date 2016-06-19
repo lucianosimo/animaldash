@@ -68,8 +68,23 @@ public class SceneManager {
 		splashScene = null;
 	}
 	
-	public void createGameScene() {
-		disposeSplashScene();
+	private void disposeGameScene() {
+		ResourcesManager.getInstance().unloadGameResources();
+	}
+	
+	public void createGameScene(int test) {
+		switch (test) {
+		case 1:
+			disposeSplashScene();
+			break;
+		case 2:
+			disposeGameScene();
+			break;
+		default:
+			disposeGameScene();
+			break;
+		}
+		
 		engine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
 			@Override
 			public void onTimePassed(final TimerHandler pTimerHandler) {

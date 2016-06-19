@@ -27,7 +27,7 @@ public class GameActivity extends BaseGameActivity {
 	private final static int BACKGROUND_WIDTH = 1600;
 	private final static int BACKGROUND_HEIGHT = 1280;
 	
-	private final static float SPLASH_DURATION = 5f;
+	private final static float SPLASH_DURATION = 4f;
 	
 	@Override
 	protected void onCreate(Bundle pSavedInstanceState) {
@@ -105,7 +105,7 @@ public class GameActivity extends BaseGameActivity {
 			@Override
 			public void onTimePassed(TimerHandler pTimerHandler) {
 				mEngine.unregisterUpdateHandler(pTimerHandler);
-				SceneManager.getInstance().createGameScene();
+				SceneManager.getInstance().createGameScene(1);
 			}
 		}));
 		pOnPopulateSceneCallback.onPopulateSceneFinished();

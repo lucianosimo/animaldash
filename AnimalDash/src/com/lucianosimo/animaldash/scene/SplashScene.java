@@ -1,7 +1,7 @@
 package com.lucianosimo.animaldash.scene;
 
 import org.andengine.engine.camera.Camera;
-import org.andengine.engine.handler.IUpdateHandler;
+import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.AlphaModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.background.Background;
@@ -18,7 +18,7 @@ public class SplashScene extends BaseScene{
 	private float screenWidth;
 	private float screenHeight;	
 	
-	private static final int UPDATES = 175;
+	//private static final int UPDATES = 175;
 	
 	@Override
 	public void createScene() {
@@ -44,10 +44,16 @@ public class SplashScene extends BaseScene{
 		attachChild(splash);
 		attachChild(fade);
 		
-		fade.registerEntityModifier(new AlphaModifier(2f, 1.0f, 0.0f));
+		fade.registerEntityModifier(new AlphaModifier(2f, 1.0f, 0.0f) {
+			@Override
+			protected void onModifierFinished(IEntity pItem) {
+				super.onModifierFinished(pItem);
+				fade.registerEntityModifier(new AlphaModifier(2f, 0.0f, 1.0f));
+			}
+		});
 		fade.setAlpha(0.0f);
 		
-		engine.registerUpdateHandler(new IUpdateHandler() {
+		/*engine.registerUpdateHandler(new IUpdateHandler() {
 			private int updates = 0;
 			
 			@Override
@@ -59,10 +65,10 @@ public class SplashScene extends BaseScene{
 			public void onUpdate(float pSecondsElapsed) {
 				updates++;
 				if (updates > UPDATES) {
-					fade.registerEntityModifier(new AlphaModifier(2f, 0.0f, 1.0f));
+					fade.registerEntityModifier(new AlphaModifier(1f, 0.0f, 1.0f));
 				}
 			}
-		});
+		});*/
 	}
 
 	@Override

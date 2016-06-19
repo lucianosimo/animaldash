@@ -32,6 +32,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.lucianosimo.animaldash.base.BaseScene;
+import com.lucianosimo.animaldash.manager.SceneManager;
 import com.lucianosimo.animaldash.manager.SceneManager.SceneType;
 import com.lucianosimo.animaldash.object.Enemy1;
 import com.lucianosimo.animaldash.object.Enemy2;
@@ -100,6 +101,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	//Integers
 	
 	//Windows
+	private Sprite game_over_window;
 
 	//Buttons
 	private Sprite button1;
@@ -108,6 +110,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private Sprite button4;
 	//private Sprite buttonSquare;
 	//private Sprite buttonTriangle;
+	private Sprite buttonReplay;
+	private Sprite buttonQuit;
 	
 	//Rectangles
 	
@@ -145,13 +149,20 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	//private final static int PLATFORM_HEIGHT = 128;
 	
 	//Buttons
-	private final static int BUTTON_1_OFFSET_X = -200;
-	private final static int BUTTON_1_OFFSET_Y = -250;
-	private final static int BUTTON_2_OFFSET_X = -200;
+	private final static int BUTTON_1_OFFSET_X = -175;
+	private final static int BUTTON_1_MOVE_MODIFIER_X = -275;
+	private final static int BUTTON_1_OFFSET_Y = -275;
+	
+	private final static int BUTTON_2_OFFSET_X = -175;
+	private final static int BUTTON_2_MOVE_MODIFIER_X = -275;
 	private final static int BUTTON_2_OFFSET_Y = -500;
-	private final static int BUTTON_3_OFFSET_X = 200;
-	private final static int BUTTON_3_OFFSET_Y = -250;
-	private final static int BUTTON_4_OFFSET_X = 200;
+	
+	private final static int BUTTON_3_OFFSET_X = 175;
+	private final static int BUTTON_3_MOVE_MODIFIER_X = 275;
+	private final static int BUTTON_3_OFFSET_Y = -275;
+	
+	private final static int BUTTON_4_OFFSET_X = 175;
+	private final static int BUTTON_4_MOVE_MODIFIER_X = 275;
 	private final static int BUTTON_4_OFFSET_Y = -500;
 	
 	//Camera
@@ -163,8 +174,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private final static int PLATFORM_CENTER_OFFSET_Y = -110;
 	private final static int MENU_TITLE_OFFSET_Y = -200;
 	private final static int MENU_PLAY_BUTTON_OFFSET_Y = 50;
-	//private final static int MENU_POWERUP_HUD_ITEMS_OFFSET_Y = -175;
 	private final static int MENU_POWERUP_HUD_ITEMS_OFFSET_Y = 200;
+	private final static int GAME_OVER_WINDOW_OFFSET_Y = 300;
+	
+	private final static int BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS = 200;
 	
 	//Ease functions
 	private static final IEaseFunction[][] EASEFUNCTIONS = new IEaseFunction[][] {
@@ -195,12 +208,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		
 		autoParallaxBackground = new AutoParallaxBackground(0, 0, 0, parallaxChangeForSecond);
 		
-		backgroundLayer1 = new ParallaxEntity(0.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_1_region, vbom));
-		backgroundLayer2 = new ParallaxEntity(-2.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_2_region, vbom));
-		backgroundLayer3 = new ParallaxEntity(-5.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_3_region, vbom));
-		backgroundLayer4 = new ParallaxEntity(-7.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_4_region, vbom));
-		backgroundLayer5 = new ParallaxEntity(-10.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_5_region, vbom));
-		backgroundLayer6 = new ParallaxEntity(-12.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_1_layer_6_region, vbom));
+		backgroundLayer1 = new ParallaxEntity(0.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_1_region, vbom));
+		backgroundLayer2 = new ParallaxEntity(-2.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_2_region, vbom));
+		backgroundLayer3 = new ParallaxEntity(-5.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_3_region, vbom));
+		backgroundLayer4 = new ParallaxEntity(-7.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_4_region, vbom));
+		backgroundLayer5 = new ParallaxEntity(-10.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_5_region, vbom));
+		backgroundLayer6 = new ParallaxEntity(-12.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_6_region, vbom));
 		
 		autoParallaxBackground.attachParallaxEntity(backgroundLayer1);
 		autoParallaxBackground.attachParallaxEntity(backgroundLayer2);
@@ -237,6 +250,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 				}
 			};
 			GameScene.this.attachChild(platforms[i]);
+			platforms[i].setCullingEnabled(true);
 		}
 	}
 	
@@ -248,7 +262,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			protected void onManagedUpdate(float pSecondsElapsed) {
 				super.onManagedUpdate(pSecondsElapsed);
 				
-				if (pressedButtonCounter == 1) {
+				if (pressedButtonCounter == 4) {
 					pressedButtonCounter = 0;
 					player.incrementSpeed();
 					
@@ -287,10 +301,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 				}
 				
 			}
-			@Override
-			public void onDie() {
-				
-			}
 		};
 		
 		player.setZIndex(1000);
@@ -310,11 +320,31 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		game_hud_powerup_bar = new Rectangle(screenWidth / 2, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, 0, HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT, vbom);
 		game_hud_powerup_background = new Sprite(screenWidth / 2, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_hud_powerup_background_region, vbom);
 		
+		game_over_window = new Sprite(screenWidth / 2, screenHeight + GAME_OVER_WINDOW_OFFSET_Y, resourcesManager.game_over_window_region, vbom);
+		buttonReplay = new Sprite(450, -50, resourcesManager.game_button_replay_region, vbom) {
+			@Override
+			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+				if (pSceneTouchEvent.isActionDown()) {
+					SceneManager.getInstance().createGameScene(2);
+				}
+				return true;
+			}
+		};
+		
+		buttonQuit = new Sprite(150, -50, resourcesManager.game_button_quit_region, vbom) {
+			@Override
+			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+				if (pSceneTouchEvent.isActionDown()) {
+					System.exit(0);
+				}
+				return true;
+			}
+		};
+		
 		game_hud_background = new Sprite(screenWidth / 2, screenHeight / 2 - 400, resourcesManager.game_hud_background_region, vbom);
 		
-		game_hud_small_player.setScale(0.6f);
-		game_hud_big_player.setScale(0.85f);
-		//game_hud_powerup_bar.setColor(70, 165, 3);
+		game_hud_small_player.setScale(0.5f);
+		game_hud_big_player.setScale(0.75f);
 		game_hud_powerup_bar.setColor(0.275f, 0.647f, 0.012f);
 		
 		menu_play_button = new Sprite(screenWidth / 2, screenHeight / 2 + MENU_PLAY_BUTTON_OFFSET_Y, resourcesManager.game_menu_play_button_region, vbom) {
@@ -330,34 +360,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 						
 						@Override
 						public void run() {
-							final IEaseFunction[] easeFunction = EASEFUNCTIONS[0];
-							
-							menu_title.registerEntityModifier(new MoveModifier(200, menu_title.getX(), 
-									menu_title.getY(), menu_title.getX(), menu_title.getY() + 375, easeFunction[0]) {
-								protected void onModifierFinished(IEntity pItem) {
-									game_hud_powerup_empty_background.registerEntityModifier(new MoveModifier(200, game_hud_powerup_empty_background.getX(), 
-											game_hud_powerup_empty_background.getY(), game_hud_powerup_empty_background.getX(), game_hud_powerup_empty_background.getY() - 375, easeFunction[1]));
-									game_hud_powerup_bar.registerEntityModifier(new MoveModifier(200, game_hud_powerup_bar.getX(), 
-											game_hud_powerup_bar.getY(), game_hud_powerup_bar.getX(), game_hud_powerup_bar.getY() - 375, easeFunction[1]));
-									game_hud_powerup_background.registerEntityModifier(new MoveModifier(200, game_hud_powerup_background.getX(), 
-											game_hud_powerup_background.getY(), game_hud_powerup_background.getX(), game_hud_powerup_background.getY() - 375, easeFunction[1]));
-									game_hud_small_player.registerEntityModifier(new MoveModifier(200, game_hud_small_player.getX(), 
-											game_hud_small_player.getY(), game_hud_small_player.getX(), game_hud_small_player.getY() - 375, easeFunction[1]));
-									game_hud_big_player.registerEntityModifier(new MoveModifier(200, game_hud_big_player.getX(), 
-											game_hud_big_player.getY(), game_hud_big_player.getX(), game_hud_big_player.getY() - 375, easeFunction[1]));
-								};
-							});
-							
-							//gameHud.detachChild(menu_title);
-							gameHud.detachChild(menu_play_button);
-							//gameHud.unregisterTouchArea(game_hud_powerup_background);
-							gameHud.unregisterTouchArea(menu_play_button);
-							
-							/*gameHud.attachChild(game_hud_powerup_empty_background);
-							gameHud.attachChild(game_hud_powerup_bar);
-							gameHud.attachChild(game_hud_powerup_background);
-							gameHud.attachChild(game_hud_small_player);
-							gameHud.attachChild(game_hud_big_player);*/
+							hideMenu();
 						}
 					});
 					gameStarted = true;
@@ -377,6 +380,19 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		gameHud.attachChild(game_hud_powerup_background);
 		gameHud.attachChild(game_hud_small_player);
 		gameHud.attachChild(game_hud_big_player);
+		
+		gameHud.attachChild(game_over_window);
+		
+		game_over_window.attachChild(buttonReplay);
+		game_over_window.attachChild(buttonQuit);
+		
+		gameHud.registerTouchArea(buttonReplay);
+		gameHud.registerTouchArea(buttonQuit);
+		
+		buttonReplay.setVisible(false);
+		buttonQuit.setVisible(false);
+		
+		createNumericalButtons();
 		
 		camera.setHUD(gameHud);
 		
@@ -462,6 +478,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			enemy3[i].setZIndex(1);
 			enemy4[i].setZIndex(1);
 			
+			enemy1[i].setCullingEnabled(true);
+			enemy2[i].setCullingEnabled(true);
+			enemy3[i].setCullingEnabled(true);
+			enemy4[i].setCullingEnabled(true);
+			
+			platforms[i].setCullingEnabled(true);
+			
 			GameScene.this.attachChild(enemy1[i]);
 			GameScene.this.attachChild(enemy2[i]);
 			GameScene.this.attachChild(enemy3[i]);
@@ -474,7 +497,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	}
 	
 	private void createNumericalButtons() {
-		button1 = new Sprite(screenWidth/2 + BUTTON_1_OFFSET_X, screenHeight/2 + BUTTON_1_OFFSET_Y, resourcesManager.game_button_1_region, vbom) {
+		button1 = new Sprite(screenWidth/2 + BUTTON_1_OFFSET_X + BUTTON_1_MOVE_MODIFIER_X, screenHeight/2 + BUTTON_1_OFFSET_Y, resourcesManager.game_button_1_region, vbom) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown() && 
@@ -490,7 +513,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 				return false;
 			}
 		};
-		button2 = new Sprite(screenWidth/2 + BUTTON_2_OFFSET_X, screenHeight/2 + BUTTON_2_OFFSET_Y, resourcesManager.game_button_2_region, vbom) {
+		button2 = new Sprite(screenWidth/2 + BUTTON_2_OFFSET_X + BUTTON_2_MOVE_MODIFIER_X, screenHeight/2 + BUTTON_2_OFFSET_Y, resourcesManager.game_button_2_region, vbom) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown() && 
@@ -506,7 +529,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 				return false;
 			}
 		};
-		button3 = new Sprite(screenWidth/2 + BUTTON_3_OFFSET_X, screenHeight/2 + BUTTON_3_OFFSET_Y, resourcesManager.game_button_3_region, vbom) {
+		button3 = new Sprite(screenWidth/2 + BUTTON_3_OFFSET_X + BUTTON_3_MOVE_MODIFIER_X, screenHeight/2 + BUTTON_3_OFFSET_Y, resourcesManager.game_button_3_region, vbom) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown() && 
@@ -522,7 +545,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 				return false;
 			}
 		};
-		button4 = new Sprite(screenWidth/2 + BUTTON_4_OFFSET_X, screenHeight/2 + BUTTON_4_OFFSET_Y, resourcesManager.game_button_4_region, vbom) {
+		button4 = new Sprite(screenWidth/2 + BUTTON_4_OFFSET_X + BUTTON_4_MOVE_MODIFIER_X, screenHeight/2 + BUTTON_4_OFFSET_Y, resourcesManager.game_button_4_region, vbom) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent,float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown() && 
@@ -589,7 +612,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 				@Override
 				protected void onManagedUpdate(float pSecondsElapsed) {
 					super.onManagedUpdate(pSecondsElapsed);
-					if (player.collidesWith(this)) {
+					if (player.collidesWith(this) && player.isPlayerAlive()) {
 						this.setX(this.getX() + FRUITS_BETWEEN_DISTANCE * FRUITS_QUANTITY);
 						
 						if (!player.isPlayerInPowerUpMode()) {
@@ -624,9 +647,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 						}
 							
 					}
+					
+					if ((player.getX() - this.getX()) > 1000) {
+						this.setX(this.getX() + FRUITS_BETWEEN_DISTANCE * FRUITS_QUANTITY);
+					}
 				}
 			};
 			
+			fruits[i].setCullingEnabled(true);
 			GameScene.this.attachChild(fruits[i]);
 		}
 	}
@@ -676,6 +704,104 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		return (enemyX - playerX < DISTANCE_ENABLING_BUTTON) && (enemyX - playerX > 0);
 	}
 	
+	private void disableButtons() {
+		gameHud.unregisterTouchArea(button1);
+		gameHud.unregisterTouchArea(button2);
+		gameHud.unregisterTouchArea(button3);
+		gameHud.unregisterTouchArea(button4);
+	}
+	
+	private void hideMenu() {
+		final IEaseFunction[] easeFunction = EASEFUNCTIONS[0];
+		
+		menu_title.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, menu_title.getX(), 
+				menu_title.getY(), menu_title.getX(), menu_title.getY() + 375, easeFunction[0]) {
+			protected void onModifierFinished(IEntity pItem) {
+				displayHUD();
+				displayButtons();
+			};
+		});
+
+		gameHud.detachChild(menu_play_button);
+		gameHud.unregisterTouchArea(menu_play_button);
+	}
+	
+	private void displayHUD() {
+		final IEaseFunction[] easeFunction = EASEFUNCTIONS[0];
+		
+		game_hud_powerup_empty_background.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, game_hud_powerup_empty_background.getX(), 
+				game_hud_powerup_empty_background.getY(), game_hud_powerup_empty_background.getX(), game_hud_powerup_empty_background.getY() - 375, easeFunction[1]));
+		game_hud_powerup_bar.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, game_hud_powerup_bar.getX(), 
+				game_hud_powerup_bar.getY(), game_hud_powerup_bar.getX(), game_hud_powerup_bar.getY() - 375, easeFunction[1]));
+		game_hud_powerup_background.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, game_hud_powerup_background.getX(), 
+				game_hud_powerup_background.getY(), game_hud_powerup_background.getX(), game_hud_powerup_background.getY() - 375, easeFunction[1]));
+		game_hud_small_player.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, game_hud_small_player.getX(), 
+				game_hud_small_player.getY(), game_hud_small_player.getX(), game_hud_small_player.getY() - 375, easeFunction[1]));
+		game_hud_big_player.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, game_hud_big_player.getX(), 
+				game_hud_big_player.getY(), game_hud_big_player.getX(), game_hud_big_player.getY() - 375, easeFunction[1]));
+	}
+	
+	private void displayButtons() {
+		final IEaseFunction[] easeFunction = EASEFUNCTIONS[0];
+		
+		button1.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, button1.getX(), 
+				button1.getY(), button1.getX() - BUTTON_1_MOVE_MODIFIER_X, button1.getY(), easeFunction[0]));
+		button2.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, button2.getX(), 
+				button2.getY(), button2.getX() - BUTTON_2_MOVE_MODIFIER_X, button2.getY(), easeFunction[0]));
+		button3.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, button3.getX(), 
+				button3.getY(), button3.getX() - BUTTON_3_MOVE_MODIFIER_X, button3.getY(), easeFunction[0]));
+		button4.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, button4.getX(), 
+				button4.getY(), button4.getX() - BUTTON_4_MOVE_MODIFIER_X, button4.getY(), easeFunction[0]));
+	}
+	
+	private void hideButtons() {
+		final IEaseFunction[] easeFunction = EASEFUNCTIONS[0];
+		
+		disableButtons();
+		
+		button1.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, button1.getX(), 
+				button1.getY(), button1.getX() + BUTTON_1_MOVE_MODIFIER_X, button1.getY(), easeFunction[0]));
+		button2.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, button2.getX(), 
+				button2.getY(), button2.getX() + BUTTON_2_MOVE_MODIFIER_X, button2.getY(), easeFunction[0]));
+		button3.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, button3.getX(), 
+				button3.getY(), button3.getX() + BUTTON_3_MOVE_MODIFIER_X, button3.getY(), easeFunction[0]));
+		button4.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, button4.getX(), 
+				button4.getY(), button4.getX() + BUTTON_4_MOVE_MODIFIER_X, button4.getY(), easeFunction[0]));
+	}
+	
+	private void hideHUD() {
+		final IEaseFunction[] easeFunction = EASEFUNCTIONS[0];
+		
+		hideButtons();
+		
+		game_hud_powerup_empty_background.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, game_hud_powerup_empty_background.getX(), 
+				game_hud_powerup_empty_background.getY(), game_hud_powerup_empty_background.getX(), game_hud_powerup_empty_background.getY() + 375, easeFunction[0]));
+		game_hud_powerup_bar.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, game_hud_powerup_bar.getX(), 
+				game_hud_powerup_bar.getY(), game_hud_powerup_bar.getX(), game_hud_powerup_bar.getY() + 375, easeFunction[0]));
+		game_hud_powerup_background.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, game_hud_powerup_background.getX(), 
+				game_hud_powerup_background.getY(), game_hud_powerup_background.getX(), game_hud_powerup_background.getY() + 375, easeFunction[0]));
+		game_hud_small_player.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, game_hud_small_player.getX(), 
+				game_hud_small_player.getY(), game_hud_small_player.getX(), game_hud_small_player.getY() + 375, easeFunction[0]));
+		game_hud_big_player.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS, game_hud_big_player.getX(), 
+				game_hud_big_player.getY(), game_hud_big_player.getX(), game_hud_big_player.getY() + 375, easeFunction[0]) {
+			@Override
+			protected void onModifierFinished(IEntity pItem) {
+				super.onModifierFinished(pItem);
+				displayGameOverWindow();
+			}
+		});
+	}
+	
+	private void displayGameOverWindow() {
+		final IEaseFunction[] easeFunction = EASEFUNCTIONS[0];
+		
+		buttonReplay.setVisible(true);
+		buttonQuit.setVisible(true);
+		
+		game_over_window.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS + 50, game_over_window.getX(), 
+				game_over_window.getY(), game_over_window.getX(), game_over_window.getY() - 600, easeFunction[1]));
+	}
+	
 	private void setCameraProperties() {
 		camera.setBoundsEnabled(true);
 		camera.setBounds(CAMERA_BOUND_X_MIN, CAMERA_BOUND_Y_MIN, CAMERA_BOUND_X_MAX, CAMERA_BOUND_Y_MAX);
@@ -705,21 +831,25 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 				
 				if (x1.getBody().getUserData().equals("enemy1") && x2.getBody().getUserData().equals("player") && player.isPlayerAlive() && !player.isPlayerInPowerUpMode()) {
 					player.killPlayer();
+					hideHUD();
 					autoParallaxBackground.setParallaxChangePerSecond(0);
 				}
 				
 				if (x1.getBody().getUserData().equals("enemy2") && x2.getBody().getUserData().equals("player") && player.isPlayerAlive() && !player.isPlayerInPowerUpMode()) {
 					player.killPlayer();
+					hideHUD();
 					autoParallaxBackground.setParallaxChangePerSecond(0);
 				}
 				
 				if (x1.getBody().getUserData().equals("enemy3") && x2.getBody().getUserData().equals("player") && player.isPlayerAlive() && !player.isPlayerInPowerUpMode()) {
 					player.killPlayer();
+					hideHUD();
 					autoParallaxBackground.setParallaxChangePerSecond(0);
 				}
 				
 				if (x1.getBody().getUserData().equals("enemy4") && x2.getBody().getUserData().equals("player") && player.isPlayerAlive() && !player.isPlayerInPowerUpMode()) {
 					player.killPlayer();
+					hideHUD();
 					autoParallaxBackground.setParallaxChangePerSecond(0);
 				}
 			}

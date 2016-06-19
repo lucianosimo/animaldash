@@ -20,14 +20,17 @@ import com.lucianosimo.animaldash.manager.ResourcesManager;
 
 public abstract class Player extends Sprite{
 
-	private final static int PLAYER_INITIAL_SPEED = 5;
-	private final static int PLAYER_JUMP_SPEED_X = 5;
-	private final static int PLAYER_JUMP_SPEED_Y = 25;
-	//private final static int PLAYER_JUMP_SPEED_Y = 20;
+	private final static int PLAYER_INITIAL_SPEED = 7;
+	private final static int PLAYER_JUMP_SPEED_X = 15;
+	//private final static int PLAYER_JUMP_SPEED_Y = 25;
+	private final static int PLAYER_JUMP_SPEED_Y = 24;
+	
+	private final static float PLAYER_JUMP_ROTATION_DURATION = 2.3f;
+	private final static float PLAYER_KILL_JUMP_ROTATION_DURATION = 3f;
 	
 	private final static int CAMERA_CHASE_RECTANGLE_WIDTH = 128;
 	private final static int CAMERA_CHASE_RECTANGLE_HEIGHT = 128;
-	private final static int CAMERA_CHASE_PLAYER_DISTANCE = 450;
+	private final static int CAMERA_CHASE_PLAYER_DISTANCE = 500;
 	
 	private final static float SCALE_FACTOR = 1.85f;
 	private final static int ROTATION_DEGREES = 90;
@@ -47,8 +50,6 @@ public abstract class Player extends Sprite{
 	
 	private boolean isAlive = true;
 	private boolean isInPowerUpMode = false;
-	
-	public abstract void onDie();
 	
 	public Player(float pX, float pY, VertexBufferObjectManager vbom, Camera camera, PhysicsWorld physicsWorld) {
 		super(pX, pY, ResourcesManager.getInstance().game_player_region, vbom);
@@ -125,7 +126,7 @@ public abstract class Player extends Sprite{
 		
 		playerBody.setLinearVelocity(new Vector2(PLAYER_JUMP_SPEED_X, PLAYER_JUMP_SPEED_Y));
 		
-		this.registerEntityModifier(new RotationModifier(2, savedRotation, savedRotation + jumpRotation * ROTATION_DEGREES) {
+		this.registerEntityModifier(new RotationModifier(PLAYER_JUMP_ROTATION_DURATION, savedRotation, savedRotation + jumpRotation * ROTATION_DEGREES) {
 			@Override
 			protected void onModifierFinished(IEntity pItem) {
 				super.onModifierFinished(pItem);
@@ -161,7 +162,7 @@ public abstract class Player extends Sprite{
 		playerBody.setLinearVelocity(new Vector2(playerBody.getLinearVelocity().x, PLAYER_JUMP_SPEED_Y));
 		playerBody.getFixtureList().get(0).setSensor(true);
 		
-		this.registerEntityModifier(new RotationModifier(3, savedRotation, savedRotation + 12 * ROTATION_DEGREES) {
+		this.registerEntityModifier(new RotationModifier(PLAYER_KILL_JUMP_ROTATION_DURATION, savedRotation, savedRotation + 12 * ROTATION_DEGREES) {
 			@Override
 			protected void onModifierFinished(IEntity pItem) {
 				super.onModifierFinished(pItem);
