@@ -189,7 +189,51 @@ public class ResourcesManager {
 			break;
 		}
 		
+		//Randomize backgrounds
+		Random rand2 = new Random();
+		int selectedPlayer = rand.nextInt(12 - 1 + 1) + 1;
 		
+		switch (selectedPlayer) {
+		case 1:
+			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_beaver.png");
+			break;
+		case 2:
+			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_bird_2.png");
+			break;
+		case 3:
+			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_bird.png");
+			break;
+		case 4:
+			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_bunny.png");
+			break;
+		case 5:
+			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_elephant.png");
+			break;
+		case 6:
+			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_giraffe.png");
+			break;
+		case 7:
+			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_hippo.png");
+			break;
+		case 8:
+			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_monkey.png");
+			break;
+		case 9:
+			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_panda.png");
+			break;
+		case 10:
+			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_penguin.png");
+			break;
+		case 11:
+			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_pig.png");
+			break;
+		case 12:
+			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_snake.png");
+			break;
+		default:
+			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_beaver.png");
+			break;
+		}
 		
 		game_hud_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameHudTextureAtlas, activity, "game_hud_background.png");
 		game_hud_powerup_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameHudTextureAtlas, activity, "game_hud_powerup_background.png");
@@ -199,7 +243,6 @@ public class ResourcesManager {
 		game_over_window_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_over_window.png");
 		
 		game_platform_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_platform.png");
-		game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player.png");
 		
 		//game_enemy_1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_1.png");
 		game_enemy_1_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(animatedTextureAtlas, activity, "game_enemy_1.png", 4, 1);
