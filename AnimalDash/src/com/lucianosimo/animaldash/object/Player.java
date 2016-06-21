@@ -37,6 +37,8 @@ public abstract class Player extends Sprite{
 	private final static int ROTATION_FACTOR_MAX = 7;
 	private final static int ROTATION_FACTOR_MIN = 5;
 	
+	private boolean inAir = false;
+	
 	private Body playerBody;
 	private FixtureDef playerFixture;
 	
@@ -133,6 +135,16 @@ public abstract class Player extends Sprite{
 				savedRotation = Player.this.getRotation();
 			}
 		});
+		
+		setInAir(true);
+	}
+	
+	public boolean isInAir() {
+		return inAir;
+	}
+	
+	public void setInAir(boolean inAir) {
+		this.inAir = inAir;
 	}
 	
 	public void setPowerUp() {

@@ -9,11 +9,13 @@ import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.DelayModifier;
 import org.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
 import org.andengine.entity.modifier.MoveModifier;
+import org.andengine.entity.modifier.RotationModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.AutoParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
+import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
@@ -102,6 +104,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	
 	//Windows
 	private Sprite game_over_window;
+	private Sprite game_over_fruits_icon;
+	private Sprite game_over_enemies_icon;
 
 	//Buttons
 	private Sprite button1;
@@ -117,6 +121,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	
 	//Counters
 	private int pressedButtonCounter;
+	private int enemiesCounter = 0;
+	private int fruitsGlobalCounter = 0;
 	
 	//Background
 	private AutoParallaxBackground autoParallaxBackground;
@@ -177,6 +183,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private final static int MENU_POWERUP_HUD_ITEMS_OFFSET_Y = 200;
 	private final static int GAME_OVER_WINDOW_OFFSET_Y = 300;
 	
+	private final static int GAME_OVER_FRUITS_ICON_X = 275;
+	private final static int GAME_OVER_FRUITS_ICON_Y = 325;
+	private final static int GAME_OVER_ENEMIES_ICON_X = 275;
+	private final static int GAME_OVER_ENEMIES_ICON_Y = 150;
+	
 	private final static int BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS = 200;
 	
 	//Ease functions
@@ -185,6 +196,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 				EaseElasticInOut.getInstance(),
 				EaseElasticOut.getInstance()},
 	};
+	
+	//Effects
+	private AnimatedSprite landingEffect;
+	private final static long[] LANDING_EFFECT_ANIMATE = new long[] {75, 75, 75, 75, 100};
 	
 	//If negative, never collides between groups, if positive yes
 	//private static final int GROUP_ENEMY = -1;
@@ -257,6 +272,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private void createPlayer() {
 		decreasingPowerUpBar = false;
 		
+		landingEffect = new AnimatedSprite(0, 0, resourcesManager.game_jump_landing_effect_region, vbom);
 		player = new Player(screenWidth/2, screenHeight/2 + 200, vbom, camera, physicsWorld) {
 			@Override
 			protected void onManagedUpdate(float pSecondsElapsed) {
@@ -303,10 +319,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			}
 		};
 		
-		player.setZIndex(1000);
+		player.setZIndex(2);
+		landingEffect.setZIndex(3);
 		
 		GameScene.this.attachChild(player);
 		GameScene.this.attachChild(player.getCameraChaseRectangle());
+		
+		GameScene.this.attachChild(landingEffect);
+		//landingEffect.setVisible(false);
 	}
 	
 	private void createMenu() {
@@ -321,6 +341,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		game_hud_powerup_background = new Sprite(screenWidth / 2, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_hud_powerup_background_region, vbom);
 		
 		game_over_window = new Sprite(screenWidth / 2, screenHeight + GAME_OVER_WINDOW_OFFSET_Y, resourcesManager.game_over_window_region, vbom);
+		game_over_fruits_icon = new Sprite(GAME_OVER_FRUITS_ICON_X, GAME_OVER_FRUITS_ICON_Y, resourcesManager.game_over_fruits_icon_region, vbom);
+		game_over_enemies_icon = new Sprite(GAME_OVER_ENEMIES_ICON_X, GAME_OVER_ENEMIES_ICON_Y, resourcesManager.game_over_enemies_icon_region, vbom);
+		
 		buttonReplay = new Sprite(450, -50, resourcesManager.game_button_replay_region, vbom) {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
@@ -385,6 +408,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		
 		game_over_window.attachChild(buttonReplay);
 		game_over_window.attachChild(buttonQuit);
+		game_over_window.attachChild(game_over_fruits_icon);
+		game_over_window.attachChild(game_over_enemies_icon);
 		
 		gameHud.registerTouchArea(buttonReplay);
 		gameHud.registerTouchArea(buttonQuit);
@@ -427,6 +452,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 								this.getEnemy1Body().getAngle());
 						
 						this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
+						
+						enemiesCounter++;
 					}
 				}
 			};
@@ -441,6 +468,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 								this.getEnemy2Body().getAngle());
 						
 						this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
+						
+						enemiesCounter++;
 					}
 				}
 			};
@@ -455,6 +484,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 								this.getEnemy3Body().getAngle());
 						
 						this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
+						
+						enemiesCounter++;
 					}
 				}
 			};
@@ -469,6 +500,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 								this.getEnemy4Body().getAngle());
 						
 						this.setPosition((this.getX() + ENEMIES_BETWEEN_DISTANCE * ENEMIES_QUANTITY), this.getY());
+						
+						enemiesCounter++;
 					}
 				}
 			};
@@ -614,6 +647,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					super.onManagedUpdate(pSecondsElapsed);
 					if (player.collidesWith(this) && player.isPlayerAlive()) {
 						this.setX(this.getX() + FRUITS_BETWEEN_DISTANCE * FRUITS_QUANTITY);
+						fruitsGlobalCounter++;
 						
 						if (!player.isPlayerInPowerUpMode()) {
 							fruitsCounter++;
@@ -793,13 +827,32 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	}
 	
 	private void displayGameOverWindow() {
+		final Sprite playerOnGameOverWindow = new Sprite(125, 250, resourcesManager.game_player_region, vbom);
 		final IEaseFunction[] easeFunction = EASEFUNCTIONS[0];
 		
 		buttonReplay.setVisible(true);
 		buttonQuit.setVisible(true);
 		
+		playerOnGameOverWindow.setScale(0.75f);
+		
 		game_over_window.registerEntityModifier(new MoveModifier(BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS + 50, game_over_window.getX(), 
-				game_over_window.getY(), game_over_window.getX(), game_over_window.getY() - 600, easeFunction[1]));
+				game_over_window.getY(), game_over_window.getX(), game_over_window.getY() - 600, easeFunction[1]) {
+			@Override
+			protected void onModifierStarted(IEntity pItem) {
+				super.onModifierStarted(pItem);
+				playerOnGameOverWindow.registerEntityModifier(new RotationModifier(50000f, 0, 75 * 720));
+				engine.runOnUpdateThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						if (!playerOnGameOverWindow.hasParent()) {
+							game_over_window.attachChild(playerOnGameOverWindow);
+						}
+					}
+				});
+			}
+			
+		});
 	}
 	
 	private void setCameraProperties() {
@@ -828,6 +881,16 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			public void beginContact(Contact contact) {
 				final Fixture x1 = contact.getFixtureA();
 				final Fixture x2 = contact.getFixtureB();
+				
+				if (x1.getBody().getUserData().equals("platform") && x2.getBody().getUserData().equals("player") && player.isPlayerAlive() && player.isInAir()) {
+					player.setInAir(false);
+					
+					//Log.d("animal", "floor");
+					
+					landingEffect.setPosition(player.getX(), screenHeight/2 + ENEMY_CENTER_OFFSET_Y);
+					//landingEffect.setVisible(true);
+					landingEffect.animate(LANDING_EFFECT_ANIMATE, 0, 4, false);
+				}
 				
 				if (x1.getBody().getUserData().equals("enemy1") && x2.getBody().getUserData().equals("player") && player.isPlayerAlive() && !player.isPlayerInPowerUpMode()) {
 					player.killPlayer();

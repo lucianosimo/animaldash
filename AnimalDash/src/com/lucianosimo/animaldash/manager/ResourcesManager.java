@@ -66,6 +66,7 @@ public class ResourcesManager {
 	public ITextureRegion game_background_layer_6_region;
 	
 	//Animated
+	public ITiledTextureRegion game_jump_landing_effect_region;
 	
 	//Menu
 	public ITextureRegion game_menu_title_region;
@@ -73,6 +74,8 @@ public class ResourcesManager {
 	
 	//Windows
 	public ITextureRegion game_over_window_region;
+	public ITextureRegion game_over_fruits_icon_region;
+	public ITextureRegion game_over_enemies_icon_region;
 
 	//Buttons
 	public ITextureRegion game_button_1_region;
@@ -130,7 +133,7 @@ public class ResourcesManager {
 		
 		gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1500, 1500, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		gameHudTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1500, 1500, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-		animatedTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1500, 400, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		animatedTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1500, 500, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		gameBackgroundLayer1TextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1600, 1280, TextureOptions.BILINEAR);
 		gameBackgroundLayer2TextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1600, 1280, TextureOptions.BILINEAR);
 		gameBackgroundLayer3TextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1600, 1280, TextureOptions.BILINEAR);
@@ -190,7 +193,6 @@ public class ResourcesManager {
 		}
 		
 		//Randomize backgrounds
-		Random rand2 = new Random();
 		int selectedPlayer = rand.nextInt(12 - 1 + 1) + 1;
 		
 		switch (selectedPlayer) {
@@ -241,8 +243,12 @@ public class ResourcesManager {
 		game_menu_title_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_menu_title.png");
 		game_menu_play_button_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_menu_play_button.png");
 		game_over_window_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_over_window.png");
+		game_over_fruits_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_fruits_icon.png");
+		game_over_enemies_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemies_icon.png");
 		
 		game_platform_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_platform.png");
+		
+		game_jump_landing_effect_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(animatedTextureAtlas, activity, "game_jump_landing_effect.png", 5, 1);
 		
 		//game_enemy_1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_1.png");
 		game_enemy_1_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(animatedTextureAtlas, activity, "game_enemy_1.png", 4, 1);
