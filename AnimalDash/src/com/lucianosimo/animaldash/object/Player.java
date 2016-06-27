@@ -10,6 +10,7 @@ import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
+import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 import com.badlogic.gdx.math.Vector2;
@@ -30,7 +31,7 @@ public abstract class Player extends Sprite{
 	
 	private final static int CAMERA_CHASE_RECTANGLE_WIDTH = 128;
 	private final static int CAMERA_CHASE_RECTANGLE_HEIGHT = 128;
-	private final static int CAMERA_CHASE_PLAYER_DISTANCE = 500;
+	private final static int CAMERA_CHASE_PLAYER_DISTANCE = 225;
 	
 	private final static float SCALE_FACTOR = 1.85f;
 	private final static int ROTATION_DEGREES = 90;
@@ -54,10 +55,10 @@ public abstract class Player extends Sprite{
 	private boolean isInPowerUpMode = false;
 	
 	public Player(float pX, float pY, VertexBufferObjectManager vbom, Camera camera, PhysicsWorld physicsWorld) {
-		super(pX, pY, ResourcesManager.getInstance().game_player_region, vbom);
+		super(pX, pY, ResourcesManager.getInstance().game_player_beaver_region, vbom);
 		
-		createPlayerPhysics(physicsWorld);
 		createCameraChaseRectanglePhysics(pX, pY, camera, physicsWorld, vbom);
+		createPlayerPhysics(physicsWorld);
 		
 		camera.setChaseEntity(cameraChaseRectangle);
 	}
@@ -104,6 +105,15 @@ public abstract class Player extends Sprite{
 		});
 	}
 	
+	public void setTexture(ITextureRegion textureRegion) {
+		this.setTextureRegion(textureRegion);
+		/*float radius = playerBody.getFixtureList().get(0).getShape().getRadius() / 2;
+		FixtureDef fix = PhysicsFactory.createFixtureDef(0, 0, 0);
+		fix.shape.setRadius(radius);
+		playerBody.destroyFixture(playerBody.getFixtureList().get(0));
+		playerBody.createFixture(fix);*/
+	}
+	
 	public Body getPlayerBody() {
 		return playerBody;
 	}
@@ -123,20 +133,22 @@ public abstract class Player extends Sprite{
 	}
 	
 	public void jump() {
-		Random rand = new Random();
-		int jumpRotation = rand.nextInt(ROTATION_FACTOR_MAX - ROTATION_FACTOR_MIN + 1) + ROTATION_FACTOR_MIN;
-		
-		playerBody.setLinearVelocity(new Vector2(PLAYER_JUMP_SPEED_X, PLAYER_JUMP_SPEED_Y));
-		
-		this.registerEntityModifier(new RotationModifier(PLAYER_JUMP_ROTATION_DURATION, savedRotation, savedRotation + jumpRotation * ROTATION_DEGREES) {
-			@Override
-			protected void onModifierFinished(IEntity pItem) {
-				super.onModifierFinished(pItem);
-				savedRotation = Player.this.getRotation();
-			}
-		});
-		
-		setInAir(true);
+		if(!this.inAir) {
+			Random rand = new Random();
+			int jumpRotation = rand.nextInt(ROTATION_FACTOR_MAX - ROTATION_FACTOR_MIN + 1) + ROTATION_FACTOR_MIN;
+			
+			playerBody.setLinearVelocity(new Vector2(PLAYER_JUMP_SPEED_X, PLAYER_JUMP_SPEED_Y));
+			
+			this.registerEntityModifier(new RotationModifier(PLAYER_JUMP_ROTATION_DURATION, savedRotation, savedRotation + jumpRotation * ROTATION_DEGREES) {
+				@Override
+				protected void onModifierFinished(IEntity pItem) {
+					super.onModifierFinished(pItem);
+					savedRotation = Player.this.getRotation();
+				}
+			});
+			
+			setInAir(true);
+		}
 	}
 	
 	public boolean isInAir() {

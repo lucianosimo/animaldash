@@ -5,7 +5,9 @@ import java.util.Random;
 import org.andengine.audio.music.MusicFactory;
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.BoundCamera;
+import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
+import org.andengine.opengl.texture.ITexture;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
@@ -16,6 +18,7 @@ import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import org.andengine.util.adt.color.Color;
 import org.andengine.util.debug.Debug;
 
 import com.lucianosimo.animaldash.GameActivity;
@@ -36,13 +39,43 @@ public class ResourcesManager {
 	//Game audio
 	
 	//Game fonts
+	public Font fruitsScoreFont;
+	public Font enemiesScoreFont;
 	
 	//Game HUD
 	public ITextureRegion game_hud_background_region;
 	public ITextureRegion game_hud_powerup_background_region;
 	
 	//Players
-	public ITextureRegion game_player_region;
+	//public ITextureRegion game_player_region;
+	public ITextureRegion game_player_beaver_region;
+	public ITextureRegion game_player_bird_2_region;
+	public ITextureRegion game_player_bird_region;
+	public ITextureRegion game_player_bunny_region;
+	public ITextureRegion game_player_elephant_region;
+	public ITextureRegion game_player_giraffe_region;
+	public ITextureRegion game_player_hippo_region;
+	public ITextureRegion game_player_monkey_region;
+	public ITextureRegion game_player_panda_region;
+	public ITextureRegion game_player_penguin_region;
+	public ITextureRegion game_player_pig_region;
+	public ITextureRegion game_player_snake_region;
+	
+	public ITextureRegion game_player_icon_beaver_region;
+	public ITextureRegion game_player_icon_bird_2_region;
+	public ITextureRegion game_player_icon_bird_region;
+	public ITextureRegion game_player_icon_bunny_region;
+	public ITextureRegion game_player_icon_elephant_region;
+	public ITextureRegion game_player_icon_giraffe_region;
+	public ITextureRegion game_player_icon_hippo_region;
+	public ITextureRegion game_player_icon_monkey_region;
+	public ITextureRegion game_player_icon_panda_region;
+	public ITextureRegion game_player_icon_penguin_region;
+	public ITextureRegion game_player_icon_pig_region;
+	public ITextureRegion game_player_icon_snake_region;
+	
+	//public ITextureRegion game_player_icon_region;
+	
 	public ITiledTextureRegion game_enemy_1_region;
 	public ITiledTextureRegion game_enemy_2_region;
 	public ITiledTextureRegion game_enemy_3_region;
@@ -76,12 +109,21 @@ public class ResourcesManager {
 	public ITextureRegion game_over_window_region;
 	public ITextureRegion game_over_fruits_icon_region;
 	public ITextureRegion game_over_enemies_icon_region;
+	public ITextureRegion game_over_x_icon_region;
 
 	//Buttons
+	public ITextureRegion game_player_select_left_button_region;
+	public ITextureRegion game_player_select_right_button_region;
+	
 	public ITextureRegion game_button_1_region;
 	public ITextureRegion game_button_2_region;
 	public ITextureRegion game_button_3_region;
 	public ITextureRegion game_button_4_region;
+
+	public ITextureRegion game_button_1_disabled_region;
+	public ITextureRegion game_button_2_disabled_region;
+	public ITextureRegion game_button_3_disabled_region;
+	public ITextureRegion game_button_4_disabled_region;
 	
 	public ITextureRegion game_button_square_region;
 	public ITextureRegion game_button_triangle_region;
@@ -93,6 +135,8 @@ public class ResourcesManager {
 
 	//Game Textures
 	private BuildableBitmapTextureAtlas gameTextureAtlas;
+	private BuildableBitmapTextureAtlas gamePlayerTextureAtlas;
+	private BuildableBitmapTextureAtlas gamePlayerIconsTextureAtlas;
 	private BuildableBitmapTextureAtlas gameHudTextureAtlas;
 	private BuildableBitmapTextureAtlas animatedTextureAtlas;
 	private BuildableBitmapTextureAtlas gameBackgroundLayer1TextureAtlas;
@@ -132,6 +176,8 @@ public class ResourcesManager {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
 		
 		gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1500, 1500, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		gamePlayerTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1200, 400, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		gamePlayerIconsTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1500, 500, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		gameHudTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1500, 1500, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		animatedTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1500, 500, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		gameBackgroundLayer1TextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1600, 1280, TextureOptions.BILINEAR);
@@ -192,59 +238,100 @@ public class ResourcesManager {
 			break;
 		}
 		
+		game_player_beaver_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerTextureAtlas, activity, "game_player_beaver.png");
+		game_player_bird_2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerTextureAtlas, activity, "game_player_bird_2.png");
+		game_player_bird_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerTextureAtlas, activity, "game_player_bird.png");
+		game_player_bunny_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerTextureAtlas, activity, "game_player_bunny.png");
+		game_player_elephant_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerTextureAtlas, activity, "game_player_elephant.png");
+		game_player_giraffe_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerTextureAtlas, activity, "game_player_giraffe.png");
+		game_player_hippo_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerTextureAtlas, activity, "game_player_hippo.png");
+		game_player_monkey_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerTextureAtlas, activity, "game_player_monkey.png");
+		game_player_panda_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerTextureAtlas, activity, "game_player_panda.png");
+		game_player_penguin_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerTextureAtlas, activity, "game_player_penguin.png");
+		game_player_pig_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerTextureAtlas, activity, "game_player_pig.png");
+		game_player_snake_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerTextureAtlas, activity, "game_player_snake.png");
+		
+		game_player_icon_beaver_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerIconsTextureAtlas, activity, "game_player_icon_beaver.png");
+		game_player_icon_bird_2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerIconsTextureAtlas, activity, "game_player_icon_bird_2.png");
+		game_player_icon_bird_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerIconsTextureAtlas, activity, "game_player_icon_bird.png");
+		game_player_icon_bunny_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerIconsTextureAtlas, activity, "game_player_icon_bunny.png");
+		game_player_icon_elephant_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerIconsTextureAtlas, activity, "game_player_icon_elephant.png");
+		game_player_icon_giraffe_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerIconsTextureAtlas, activity, "game_player_icon_giraffe.png");
+		game_player_icon_hippo_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerIconsTextureAtlas, activity, "game_player_icon_hippo.png");
+		game_player_icon_monkey_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerIconsTextureAtlas, activity, "game_player_icon_monkey.png");
+		game_player_icon_panda_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerIconsTextureAtlas, activity, "game_player_icon_panda.png");
+		game_player_icon_penguin_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerIconsTextureAtlas, activity, "game_player_icon_penguin.png");
+		game_player_icon_pig_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerIconsTextureAtlas, activity, "game_player_icon_pig.png");
+		game_player_icon_snake_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerIconsTextureAtlas, activity, "game_player_icon_snake.png");
+		
 		//Randomize backgrounds
-		int selectedPlayer = rand.nextInt(12 - 1 + 1) + 1;
+		/*int selectedPlayer = rand.nextInt(12 - 1 + 1) + 1;
 		
 		switch (selectedPlayer) {
 		case 1:
 			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_beaver.png");
+			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_beaver.png");
 			break;
 		case 2:
 			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_bird_2.png");
+			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_bird_2.png");
 			break;
 		case 3:
 			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_bird.png");
+			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_bird.png");
 			break;
 		case 4:
 			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_bunny.png");
+			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_bunny.png");
 			break;
 		case 5:
 			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_elephant.png");
+			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_elephant.png");
 			break;
 		case 6:
 			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_giraffe.png");
+			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_giraffe.png");
 			break;
 		case 7:
 			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_hippo.png");
+			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_hippo.png");
 			break;
 		case 8:
 			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_monkey.png");
+			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_monkey.png");
 			break;
 		case 9:
 			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_panda.png");
+			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_panda.png");
 			break;
 		case 10:
 			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_penguin.png");
+			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_penguin.png");
 			break;
 		case 11:
 			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_pig.png");
+			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_pig.png");
 			break;
 		case 12:
 			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_snake.png");
+			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_snake.png");
 			break;
 		default:
 			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_beaver.png");
+			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_beaver.png");
 			break;
-		}
+		}*/
 		
 		game_hud_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameHudTextureAtlas, activity, "game_hud_background.png");
 		game_hud_powerup_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameHudTextureAtlas, activity, "game_hud_powerup_background.png");
 		
 		game_menu_title_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_menu_title.png");
 		game_menu_play_button_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_menu_play_button.png");
+		
 		game_over_window_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_over_window.png");
 		game_over_fruits_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_fruits_icon.png");
 		game_over_enemies_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemies_icon.png");
+		game_over_x_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_x_icon.png");
 		
 		game_platform_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_platform.png");
 		
@@ -261,10 +348,18 @@ public class ResourcesManager {
 		game_fruit_3_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_fruit_3.png");
 		game_fruit_4_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_fruit_4.png");
 		
+		game_player_select_left_button_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_select_left_button.png");
+		game_player_select_right_button_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_select_right_button.png");
+		
 		game_button_1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_1.png");
 		game_button_2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_2.png");
 		game_button_3_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_3.png");
 		game_button_4_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_4.png");
+		
+		game_button_1_disabled_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_1_disabled.png");
+		game_button_2_disabled_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_2_disabled.png");
+		game_button_3_disabled_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_3_disabled.png");
+		game_button_4_disabled_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_4_disabled.png");
 		
 		game_button_square_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_square.png");
 		game_button_triangle_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_button_triangle.png");
@@ -276,6 +371,8 @@ public class ResourcesManager {
 		
 		try {
 			this.gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.gamePlayerTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.gamePlayerIconsTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.gameHudTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.animatedTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.gameBackgroundLayer1TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
@@ -286,6 +383,8 @@ public class ResourcesManager {
 			this.gameBackgroundLayer6TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			
 			this.gameTextureAtlas.load();
+			this.gamePlayerTextureAtlas.load();
+			this.gamePlayerIconsTextureAtlas.load();
 			this.gameHudTextureAtlas.load();
 			this.animatedTextureAtlas.load();
 			this.gameBackgroundLayer1TextureAtlas.load();
@@ -309,11 +408,21 @@ public class ResourcesManager {
 	}
 	
 	private void loadGameFonts() {
-		FontFactory.setAssetBasePath("fonts/game/");
+		FontFactory.setAssetBasePath("fonts/");
+		final ITexture fruitsScoreTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		final ITexture enemiesScoreTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+
+		fruitsScoreFont = FontFactory.createStrokeFromAsset(activity.getFontManager(), fruitsScoreTexture, activity.getAssets(), "dimbo.ttf", 85, true, Color.WHITE_ARGB_PACKED_INT, 3f, Color.BLACK_ARGB_PACKED_INT);
+		enemiesScoreFont = FontFactory.createStrokeFromAsset(activity.getFontManager(), enemiesScoreTexture, activity.getAssets(), "dimbo.ttf", 85, true, Color.WHITE_ARGB_PACKED_INT, 3f, Color.BLACK_ARGB_PACKED_INT);
+
+		fruitsScoreFont.load();
+		enemiesScoreFont.load();
 	}
 	
 	private void unloadGameTextures() {
 		this.gameTextureAtlas.unload();
+		this.gamePlayerTextureAtlas.unload();
+		this.gamePlayerIconsTextureAtlas.unload();
 		this.gameHudTextureAtlas.unload();
 		this.animatedTextureAtlas.unload();
 		this.gameBackgroundLayer1TextureAtlas.unload();
@@ -325,6 +434,8 @@ public class ResourcesManager {
 	}
 	
 	private void unloadGameFonts() {
+		fruitsScoreFont.unload();
+		enemiesScoreFont.unload();
 	}
 	
 	
