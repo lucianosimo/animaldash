@@ -19,8 +19,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.lucianosimo.animaldash.manager.ResourcesManager;
 
-import android.util.Log;
-
 public abstract class Player extends Sprite{
 
 	private final static int PLAYER_INITIAL_SPEED = 7;
@@ -74,9 +72,8 @@ public abstract class Player extends Sprite{
 		//playerBody = PhysicsFactory.createCircleBody(physicsWorld, this, BodyType.DynamicBody, playerFixture);
 		//Panda
 		playerBody = PhysicsFactory.createCircleBody(physicsWorld, this, BodyType.DynamicBody, playerFixture);
-		Log.d("animal", "Radius: " + playerBody.getFixtureList().get(0).getShape().getRadius());
-		Log.d("animal", "Local center: " + playerBody.getLocalCenter());
-		playerBody.getFixtureList().get(0).getShape().setRadius(1.5f);
+		playerBody.getFixtureList().get(0).getShape().setRadius(1.6f);
+		this.setAnchorCenter(0.5f, 0.45f);
 		
 		this.setUserData("player");
 		playerBody.setUserData("player");

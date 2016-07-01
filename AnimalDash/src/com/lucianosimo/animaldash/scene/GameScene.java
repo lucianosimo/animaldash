@@ -17,7 +17,6 @@ import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
-import org.andengine.extension.debugdraw.DebugRenderer;
 import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
@@ -245,8 +244,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		createPlayer();
 		createMenu();
 		setCameraProperties();
-		DebugRenderer debug = new DebugRenderer(physicsWorld, vbom);
-        GameScene.this.attachChild(debug);
+		//DebugRenderer debug = new DebugRenderer(physicsWorld, vbom);
+        //GameScene.this.attachChild(debug);
 	}
 	
 	private void createBackground() {
@@ -378,6 +377,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					}
 					player.setTexture(playersRegions.get(selectedPlayerIndex));
 					gamePlayerIcon.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
+					game_hud_small_player.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
+					game_hud_big_player.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
 				}
 				return true;
 			}
@@ -392,12 +393,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					}
 					player.setTexture(playersRegions.get(selectedPlayerIndex));
 					gamePlayerIcon.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
+					game_hud_small_player.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
+					game_hud_big_player.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
 				}
 				return true;
 			}
 		};
 		
-		gamePlayerIcon =  new Sprite(screenWidth / 2, screenHeight / 2 + BUTTON_PLAYER_ICON_CENTER_OFFSET_Y, resourcesManager.game_player_icon_beaver_region, vbom);
+		gamePlayerIcon =  new Sprite(screenWidth / 2, screenHeight / 2 + BUTTON_PLAYER_ICON_CENTER_OFFSET_Y, resourcesManager.game_player_icon_panda_region, vbom);
 		
 		game_hud_small_player = new Sprite(screenWidth / 2 - 300, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_player_beaver_region, vbom);
 		game_hud_big_player = new Sprite(screenWidth / 2 + 300, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_player_beaver_region, vbom);
