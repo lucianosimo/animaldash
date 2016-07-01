@@ -206,7 +206,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private final static int CAMERA_BOUND_X_MAX = 100000000;
 	private final static int CAMERA_BOUND_Y_MAX = 1280;
 	
-	private final static int PLATFORM_CENTER_OFFSET_Y = -110;
+	private final static int PLATFORM_CENTER_OFFSET_Y = -105;
 	private final static int MENU_TITLE_OFFSET_Y = -200;
 	private final static int MENU_TITLE_MOVE_MODIFIER_Y = 375;
 	private final static int MENU_PLAY_BUTTON_OFFSET_Y = 50;
@@ -377,8 +377,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					}
 					player.setTexture(playersRegions.get(selectedPlayerIndex));
 					gamePlayerIcon.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
-					game_hud_small_player.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
-					game_hud_big_player.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
+					game_hud_small_player.setTextureRegion(playersRegions.get(selectedPlayerIndex));
+					game_hud_big_player.setTextureRegion(playersRegions.get(selectedPlayerIndex));
 				}
 				return true;
 			}
@@ -393,8 +393,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					}
 					player.setTexture(playersRegions.get(selectedPlayerIndex));
 					gamePlayerIcon.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
-					game_hud_small_player.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
-					game_hud_big_player.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
+					game_hud_small_player.setTextureRegion(playersRegions.get(selectedPlayerIndex));
+					game_hud_big_player.setTextureRegion(playersRegions.get(selectedPlayerIndex));
 				}
 				return true;
 			}
@@ -402,8 +402,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		
 		gamePlayerIcon =  new Sprite(screenWidth / 2, screenHeight / 2 + BUTTON_PLAYER_ICON_CENTER_OFFSET_Y, resourcesManager.game_player_icon_panda_region, vbom);
 		
-		game_hud_small_player = new Sprite(screenWidth / 2 - 300, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_player_beaver_region, vbom);
-		game_hud_big_player = new Sprite(screenWidth / 2 + 300, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_player_beaver_region, vbom);
+		game_hud_small_player = new Sprite(screenWidth / 2 - 300, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_player_panda_region, vbom);
+		game_hud_big_player = new Sprite(screenWidth / 2 + 300, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_player_panda_region, vbom);
 		game_hud_powerup_empty_background = new Rectangle(screenWidth / 2 + 7, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, HUD_POWERUP_EMPTY_BACKGROUND_WIDTH, HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT, vbom);
 		game_hud_powerup_bar = new Rectangle(screenWidth / 2, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, 0, HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT, vbom);
 		game_hud_powerup_background = new Sprite(screenWidth / 2, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_hud_powerup_background_region, vbom);
