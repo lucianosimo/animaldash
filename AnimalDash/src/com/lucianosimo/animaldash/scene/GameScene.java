@@ -17,6 +17,7 @@ import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
+import org.andengine.extension.debugdraw.DebugRenderer;
 import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
@@ -244,8 +245,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		createPlayer();
 		createMenu();
 		setCameraProperties();
-		//DebugRenderer debug = new DebugRenderer(physicsWorld, vbom);
-        //GameScene.this.attachChild(debug);
+		DebugRenderer debug = new DebugRenderer(physicsWorld, vbom);
+        GameScene.this.attachChild(debug);
 	}
 	
 	private void createBackground() {
@@ -352,8 +353,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		player.setZIndex(2);
 		landingEffect.setZIndex(3);
 		
-		//player.setTexture(resourcesManager.game_player_bird_2_region);
-		
 		GameScene.this.attachChild(player);
 		GameScene.this.attachChild(player.getCameraChaseRectangle());
 		
@@ -377,7 +376,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					if (selectedPlayerIndex == -1) {
 						selectedPlayerIndex = 11;
 					}
-					player.setTextureRegion(playersRegions.get(selectedPlayerIndex));
+					player.setTexture(playersRegions.get(selectedPlayerIndex));
 					gamePlayerIcon.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
 				}
 				return true;
@@ -391,7 +390,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					if (selectedPlayerIndex == 12) {
 						selectedPlayerIndex = 0;
 					}
-					player.setTextureRegion(playersRegions.get(selectedPlayerIndex));
+					player.setTexture(playersRegions.get(selectedPlayerIndex));
 					gamePlayerIcon.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
 				}
 				return true;
