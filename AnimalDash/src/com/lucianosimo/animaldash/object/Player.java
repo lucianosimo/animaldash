@@ -5,6 +5,7 @@ import java.util.Random;
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.RotationModifier;
+import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
@@ -38,6 +39,12 @@ public abstract class Player extends Sprite{
 	private final static int ROTATION_FACTOR_MAX = 7;
 	private final static int ROTATION_FACTOR_MIN = 5;
 	
+	private float jumpScaleCycleDuration = 0.15f;
+	private float fromScaleHorizontal = 1;
+	private float toScaleHorizontal = 0.8f;
+	private float fromScaleVertical = 1;
+	private float toScaleVertical = 1.2f;
+	
 	private boolean inAir = false;
 	
 	private Body playerBody;
@@ -54,10 +61,8 @@ public abstract class Player extends Sprite{
 	private boolean isAlive = true;
 	private boolean isInPowerUpMode = false;
 	
-	public Player(float pX, float pY, VertexBufferObjectManager vbom, Camera camera, PhysicsWorld physicsWorld) {
-		//super(pX, pY, ResourcesManager.getInstance().game_player_beaver_region, vbom);
-		
-		super(pX, pY, ResourcesManager.getInstance().game_player_panda_region, vbom);
+	public Player(float pX, float pY, VertexBufferObjectManager vbom, Camera camera, PhysicsWorld physicsWorld) {		
+		super(pX, pY, ResourcesManager.getInstance().game_player_beaver_region, vbom);
 		
 		createCameraChaseRectanglePhysics(pX, pY, camera, physicsWorld, vbom);
 		createPlayerPhysics(physicsWorld);
@@ -68,12 +73,9 @@ public abstract class Player extends Sprite{
 	private void createPlayerPhysics(PhysicsWorld physicsWorld) {
 		playerFixture = PhysicsFactory.createFixtureDef(0, 0, 0);
 		
-		//Default beaver, monkey, penguin
-		//playerBody = PhysicsFactory.createCircleBody(physicsWorld, this, BodyType.DynamicBody, playerFixture);
-		//Panda
 		playerBody = PhysicsFactory.createCircleBody(physicsWorld, this, BodyType.DynamicBody, playerFixture);
-		playerBody.getFixtureList().get(0).getShape().setRadius(1.6f);
-		this.setAnchorCenter(0.5f, 0.45f);
+		playerBody.getFixtureList().get(0).getShape().setRadius(1.8f);
+		this.setAnchorCenter(0.5f, 0.5f);
 		
 		this.setUserData("player");
 		playerBody.setUserData("player");
@@ -112,13 +114,75 @@ public abstract class Player extends Sprite{
 		});
 	}
 	
-	public void setTexture(ITextureRegion textureRegion) {
+	public void setTexture(ITextureRegion textureRegion, int playerIndex) {
 		this.setTextureRegion(textureRegion);
-		/*float radius = playerBody.getFixtureList().get(0).getShape().getRadius() / 2;
-		FixtureDef fix = PhysicsFactory.createFixtureDef(0, 0, 0);
-		fix.shape.setRadius(radius);
-		playerBody.destroyFixture(playerBody.getFixtureList().get(0));
-		playerBody.createFixture(fix);*/
+		
+		switch (playerIndex) {
+		//Beaver
+		case 0:
+			playerBody.getFixtureList().get(0).getShape().setRadius(1.8f);
+			this.setAnchorCenter(0.5f, 0.5f);
+			break;
+		//Bird2
+		case 1:
+			playerBody.getFixtureList().get(0).getShape().setRadius(1.75f);
+			this.setAnchorCenter(0.5f, 0.55f);
+			break;
+		//Bird
+		case 2:
+			playerBody.getFixtureList().get(0).getShape().setRadius(1.85f);
+			this.setAnchorCenter(0.5f, 0.6f);
+			break;
+		//Bunny
+		case 3:
+			playerBody.getFixtureList().get(0).getShape().setRadius(1.35f);
+			this.setAnchorCenter(0.5f, 0.35f);		
+			break;
+		//Elephant
+		case 4:
+			playerBody.getFixtureList().get(0).getShape().setRadius(1.35f);
+			this.setAnchorCenter(0.5f, 0.59f);
+			break;
+		//Giraffe
+		case 5:
+			playerBody.getFixtureList().get(0).getShape().setRadius(1.22f);
+			this.setAnchorCenter(0.5f, 0.37f);
+			break;
+		//Hippo
+		case 6:
+			playerBody.getFixtureList().get(0).getShape().setRadius(1.58f);
+			this.setAnchorCenter(0.5f, 0.42f);
+			break;
+		//Monkey
+		case 7:
+			playerBody.getFixtureList().get(0).getShape().setRadius(1.8f);
+			this.setAnchorCenter(0.5f, 0.5f);
+			break;
+		//Panda
+		case 8:
+			playerBody.getFixtureList().get(0).getShape().setRadius(1.6f);
+			this.setAnchorCenter(0.5f, 0.45f);
+			break;
+		//Penguin
+		case 9:
+			playerBody.getFixtureList().get(0).getShape().setRadius(1.95f);
+			this.setAnchorCenter(0.5f, 0.5f);
+			break;
+		//Pig
+		case 10:
+			playerBody.getFixtureList().get(0).getShape().setRadius(1.84f);
+			this.setAnchorCenter(0.5f, 0.45f);
+			break;
+		//Snake
+		case 11:		
+			playerBody.getFixtureList().get(0).getShape().setRadius(1.5f);
+			this.setAnchorCenter(0.5f, 0.6f);
+			break;
+		default:
+			playerBody.getFixtureList().get(0).getShape().setRadius(1.8f);
+			this.setAnchorCenter(0.5f, 0.5f);
+			break;
+		}
 	}
 	
 	public Body getPlayerBody() {
@@ -140,11 +204,40 @@ public abstract class Player extends Sprite{
 	}
 	
 	public void jump() {
+		
 		if(!this.inAir) {
 			Random rand = new Random();
 			int jumpRotation = rand.nextInt(ROTATION_FACTOR_MAX - ROTATION_FACTOR_MIN + 1) + ROTATION_FACTOR_MIN;
 			
 			playerBody.setLinearVelocity(new Vector2(PLAYER_JUMP_SPEED_X, PLAYER_JUMP_SPEED_Y));
+			
+			if (!this.isInPowerUpMode) {
+				if (((int)this.getRotation() / 90 & 1) == 0 || this.getRotation() == 0) {
+					this.registerEntityModifier(
+							new ScaleModifier(
+									jumpScaleCycleDuration, fromScaleHorizontal, toScaleHorizontal, fromScaleVertical, toScaleVertical) {
+						@Override
+						protected void onModifierFinished(IEntity pItem) {
+							super.onModifierFinished(pItem);
+							Player.this.registerEntityModifier(
+									new ScaleModifier(
+											jumpScaleCycleDuration, toScaleHorizontal, fromScaleHorizontal , toScaleVertical, fromScaleVertical));
+						}
+					});
+				} else {
+					this.registerEntityModifier(
+							new ScaleModifier(
+									jumpScaleCycleDuration, fromScaleVertical, toScaleVertical, fromScaleHorizontal, toScaleHorizontal) {
+						@Override
+						protected void onModifierFinished(IEntity pItem) {
+							super.onModifierFinished(pItem);
+							Player.this.registerEntityModifier(
+									new ScaleModifier(
+											jumpScaleCycleDuration, toScaleVertical, fromScaleVertical, toScaleHorizontal, fromScaleHorizontal));
+						}
+					});
+				}
+			}
 			
 			this.registerEntityModifier(new RotationModifier(PLAYER_JUMP_ROTATION_DURATION, savedRotation, savedRotation + jumpRotation * ROTATION_DEGREES) {
 				@Override
@@ -164,6 +257,37 @@ public abstract class Player extends Sprite{
 	
 	public void setInAir(boolean inAir) {
 		this.inAir = inAir;
+		
+		if (!this.inAir && !this.isInPowerUpMode) {
+			
+			if (((int)this.getRotation() / 90 & 1) == 0) {
+				this.registerEntityModifier(
+					new ScaleModifier(
+							jumpScaleCycleDuration, fromScaleVertical, toScaleVertical, fromScaleHorizontal, toScaleHorizontal) {
+						@Override
+						protected void onModifierFinished(IEntity pItem) {
+							super.onModifierFinished(pItem);
+							Player.this.registerEntityModifier(
+									new ScaleModifier(
+											jumpScaleCycleDuration, toScaleVertical, fromScaleVertical, toScaleHorizontal, fromScaleHorizontal));
+						}
+					});
+			} else {
+				this.registerEntityModifier(
+					new ScaleModifier(
+							jumpScaleCycleDuration, fromScaleHorizontal, toScaleHorizontal, fromScaleVertical, toScaleVertical) {
+						@Override
+						protected void onModifierFinished(IEntity pItem) {
+							super.onModifierFinished(pItem);
+							Player.this.registerEntityModifier(
+									new ScaleModifier(
+											jumpScaleCycleDuration, toScaleHorizontal, fromScaleHorizontal , toScaleVertical, fromScaleVertical));
+						}
+					});
+			}
+			
+			
+		}
 	}
 	
 	public void setPowerUp() {

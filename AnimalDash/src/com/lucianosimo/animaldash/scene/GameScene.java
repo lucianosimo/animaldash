@@ -254,11 +254,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		autoParallaxBackground = new AutoParallaxBackground(0, 0, 0, parallaxChangeForSecond);
 		
 		backgroundLayer1 = new ParallaxEntity(0.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_1_region, vbom));
-		backgroundLayer2 = new ParallaxEntity(-2.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_2_region, vbom));
-		backgroundLayer3 = new ParallaxEntity(-5.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_3_region, vbom));
-		backgroundLayer4 = new ParallaxEntity(-7.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_4_region, vbom));
-		backgroundLayer5 = new ParallaxEntity(-10.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_5_region, vbom));
-		backgroundLayer6 = new ParallaxEntity(-12.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_6_region, vbom));
+		backgroundLayer2 = new ParallaxEntity(-5.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_2_region, vbom));
+		backgroundLayer3 = new ParallaxEntity(-7.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_3_region, vbom));
+		backgroundLayer4 = new ParallaxEntity(-10.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_4_region, vbom));
+		backgroundLayer5 = new ParallaxEntity(-12.5f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_5_region, vbom));
+		backgroundLayer6 = new ParallaxEntity(-15.0f, new Sprite(screenWidth / 2, screenHeight / 2, screenWidth, screenHeight, resourcesManager.game_background_layer_6_region, vbom));
 		
 		autoParallaxBackground.attachParallaxEntity(backgroundLayer1);
 		autoParallaxBackground.attachParallaxEntity(backgroundLayer2);
@@ -375,7 +375,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					if (selectedPlayerIndex == -1) {
 						selectedPlayerIndex = 11;
 					}
-					player.setTexture(playersRegions.get(selectedPlayerIndex));
+					player.setTexture(playersRegions.get(selectedPlayerIndex), selectedPlayerIndex);
 					gamePlayerIcon.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
 					game_hud_small_player.setTextureRegion(playersRegions.get(selectedPlayerIndex));
 					game_hud_big_player.setTextureRegion(playersRegions.get(selectedPlayerIndex));
@@ -391,7 +391,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					if (selectedPlayerIndex == 12) {
 						selectedPlayerIndex = 0;
 					}
-					player.setTexture(playersRegions.get(selectedPlayerIndex));
+					player.setTexture(playersRegions.get(selectedPlayerIndex), selectedPlayerIndex);
 					gamePlayerIcon.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
 					game_hud_small_player.setTextureRegion(playersRegions.get(selectedPlayerIndex));
 					game_hud_big_player.setTextureRegion(playersRegions.get(selectedPlayerIndex));
@@ -400,10 +400,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			}
 		};
 		
-		gamePlayerIcon =  new Sprite(screenWidth / 2, screenHeight / 2 + BUTTON_PLAYER_ICON_CENTER_OFFSET_Y, resourcesManager.game_player_icon_panda_region, vbom);
+		gamePlayerIcon =  new Sprite(screenWidth / 2, screenHeight / 2 + BUTTON_PLAYER_ICON_CENTER_OFFSET_Y, resourcesManager.game_player_icon_beaver_region, vbom);
 		
-		game_hud_small_player = new Sprite(screenWidth / 2 - 300, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_player_panda_region, vbom);
-		game_hud_big_player = new Sprite(screenWidth / 2 + 300, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_player_panda_region, vbom);
+		game_hud_small_player = new Sprite(screenWidth / 2 - 300, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_player_beaver_region, vbom);
+		game_hud_big_player = new Sprite(screenWidth / 2 + 300, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_player_beaver_region, vbom);
 		game_hud_powerup_empty_background = new Rectangle(screenWidth / 2 + 7, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, HUD_POWERUP_EMPTY_BACKGROUND_WIDTH, HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT, vbom);
 		game_hud_powerup_bar = new Rectangle(screenWidth / 2, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, 0, HUD_POWERUP_EMPTY_BACKGROUND_HEIGHT, vbom);
 		game_hud_powerup_background = new Sprite(screenWidth / 2, screenHeight + MENU_POWERUP_HUD_ITEMS_OFFSET_Y, resourcesManager.game_hud_powerup_background_region, vbom);
