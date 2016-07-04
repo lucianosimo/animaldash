@@ -220,6 +220,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	
 	private final static int BUTTONS_MOVE_MODIFIER_DURATION_MILISECONDS = 200;
 	
+	private final static float JUMP_LANDING_EFFECT_SCALE_FACTOR = 1.85f;
+	
 	//Ease functions
 	private static final IEaseFunction[][] EASEFUNCTIONS = new IEaseFunction[][] {
 		new IEaseFunction[] { 
@@ -371,11 +373,23 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown() && !gameStarted) {
+					final float playerOriginalX = player.getX();
+					final float playerOriginalY = player.getY();
+					
 					selectedPlayerIndex--;
 					if (selectedPlayerIndex == -1) {
 						selectedPlayerIndex = 11;
 					}
-					player.setTexture(playersRegions.get(selectedPlayerIndex), selectedPlayerIndex);
+
+					player.registerEntityModifier(
+						new MoveModifier(1f, playerOriginalX, playerOriginalY, playerOriginalX - 300, playerOriginalY) {
+							protected void onModifierFinished(IEntity pItem) {
+								player.setTexture(playersRegions.get(selectedPlayerIndex), selectedPlayerIndex);
+								player.registerEntityModifier(
+										new MoveModifier(1f, player.getX(), player.getY(), playerOriginalX, playerOriginalY));
+							};
+						});
+					
 					gamePlayerIcon.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
 					game_hud_small_player.setTextureRegion(playersRegions.get(selectedPlayerIndex));
 					game_hud_big_player.setTextureRegion(playersRegions.get(selectedPlayerIndex));
@@ -387,11 +401,23 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown() && !gameStarted) {
+					final float playerOriginalX = player.getX();
+					final float playerOriginalY = player.getY();
+					
 					selectedPlayerIndex++;
 					if (selectedPlayerIndex == 12) {
 						selectedPlayerIndex = 0;
 					}
-					player.setTexture(playersRegions.get(selectedPlayerIndex), selectedPlayerIndex);
+
+					player.registerEntityModifier(
+						new MoveModifier(1f, playerOriginalX, playerOriginalY, playerOriginalX - 300, playerOriginalY) {
+							protected void onModifierFinished(IEntity pItem) {
+								player.setTexture(playersRegions.get(selectedPlayerIndex), selectedPlayerIndex);
+								player.registerEntityModifier(
+										new MoveModifier(1f, player.getX(), player.getY(), playerOriginalX, playerOriginalY));
+							};
+						});
+					
 					gamePlayerIcon.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
 					game_hud_small_player.setTextureRegion(playersRegions.get(selectedPlayerIndex));
 					game_hud_big_player.setTextureRegion(playersRegions.get(selectedPlayerIndex));
@@ -855,6 +881,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 								@Override
 								public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
 									player.setPowerUp();
+									landingEffect.setScale(JUMP_LANDING_EFFECT_SCALE_FACTOR);
 									for (int i = 0; i < ENEMIES_QUANTITY / 4; i++) {
 										enemy1[i].getEnemy1Body().setActive(false);
 										enemy2[i].getEnemy2Body().setActive(false);
@@ -865,6 +892,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 								
 								public void onModifierFinished(org.andengine.util.modifier.IModifier<IEntity> pModifier, IEntity pItem) {
 									player.unsetPowerUp();
+									landingEffect.setScale(1);
 									for (int i = 0; i < ENEMIES_QUANTITY / 4; i++) {
 										enemy1[i].getEnemy1Body().setActive(true);
 										enemy2[i].getEnemy2Body().setActive(true);
@@ -889,41 +917,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	}
 	
 	private void resizePowerUpBar() {
-		/*player.registerEntityModifier(new DelayModifier(POWER_UP_BAR_IMCREASE_DURATION, new IEntityModifierListener() {
-			
-			@Override
-			public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-				increaseBarUpdateHandler = new IUpdateHandler() {
-					 
-					
-					@Override
-					public void reset() {
-						
-					}
-					
-					@Override
-					public void onUpdate(float pSecondsElapsed) {
-						//increaseBarCounter = increaseBarCounter + 0.0085f;
-						increaseBarCounter = increaseBarCounter + 0.017f;
-						game_hud_powerup_bar.setWidth(HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / POWER_UP_REQUIRED_FRUITS * 1 * increaseBarCounter);
-						game_hud_powerup_bar.setPosition((game_hud_powerup_empty_background.getX() - HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / 2) + game_hud_powerup_bar.getWidth() / 2, 
-								game_hud_powerup_bar.getY());
-						
-					}
-				};
-				
-				engine.registerUpdateHandler(increaseBarUpdateHandler);
-			}
-			
-			@Override
-			public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {				
-				game_hud_powerup_bar.setWidth(HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / POWER_UP_REQUIRED_FRUITS * fruitsCounter);
-				game_hud_powerup_bar.setPosition((game_hud_powerup_empty_background.getX() - HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / 2) + game_hud_powerup_bar.getWidth() / 2, 
-						game_hud_powerup_bar.getY());
-				//increaseBarCounter = 0;
-				engine.unregisterUpdateHandler(increaseBarUpdateHandler);
-			}
-		}));*/
 		game_hud_powerup_bar.setWidth(HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / POWER_UP_REQUIRED_FRUITS * fruitsCounter);
 		game_hud_powerup_bar.setPosition((game_hud_powerup_empty_background.getX() - HUD_POWERUP_EMPTY_BACKGROUND_WIDTH / 2) + game_hud_powerup_bar.getWidth() / 2, 
 				game_hud_powerup_bar.getY());
@@ -1087,11 +1080,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 				
 				if (x1.getBody().getUserData().equals("platform") && x2.getBody().getUserData().equals("player") && player.isPlayerAlive() && player.isInAir()) {
 					player.setInAir(false);
+					if (!player.isPlayerInPowerUpMode()) {
+						landingEffect.setPosition(player.getX(), screenHeight/2 + ENEMY_CENTER_OFFSET_Y);
+					} else {
+						landingEffect.setPosition(player.getX(), screenHeight/2 + ENEMY_CENTER_OFFSET_Y + 40);
+					}
 					
-					//Log.d("animal", "floor");
-					
-					landingEffect.setPosition(player.getX(), screenHeight/2 + ENEMY_CENTER_OFFSET_Y);
-					//landingEffect.setVisible(true);
 					landingEffect.animate(LANDING_EFFECT_ANIMATE, 0, 4, false);
 				}
 				

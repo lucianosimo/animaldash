@@ -39,7 +39,7 @@ public abstract class Player extends Sprite{
 	private final static int ROTATION_FACTOR_MAX = 7;
 	private final static int ROTATION_FACTOR_MIN = 5;
 	
-	private float jumpScaleCycleDuration = 0.15f;
+	private float jumpScaleCycleDuration = 0.1f;
 	private float fromScaleHorizontal = 1;
 	private float toScaleHorizontal = 0.8f;
 	private float fromScaleVertical = 1;

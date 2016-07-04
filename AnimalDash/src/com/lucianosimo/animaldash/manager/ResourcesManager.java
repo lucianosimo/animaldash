@@ -81,6 +81,11 @@ public class ResourcesManager {
 	public ITiledTextureRegion game_enemy_3_region;
 	public ITiledTextureRegion game_enemy_4_region;
 	
+	public ITextureRegion game_enemy_1_sign_region;
+	public ITextureRegion game_enemy_2_sign_region;
+	public ITextureRegion game_enemy_3_sign_region;
+	public ITextureRegion game_enemy_4_sign_region;
+	
 	//Fruits
 	public ITextureRegion game_fruit_1_region;
 	public ITextureRegion game_fruit_2_region;
@@ -264,63 +269,6 @@ public class ResourcesManager {
 		game_player_icon_pig_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerIconsTextureAtlas, activity, "game_player_icon_pig.png");
 		game_player_icon_snake_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gamePlayerIconsTextureAtlas, activity, "game_player_icon_snake.png");
 		
-		//Randomize backgrounds
-		/*int selectedPlayer = rand.nextInt(12 - 1 + 1) + 1;
-		
-		switch (selectedPlayer) {
-		case 1:
-			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_beaver.png");
-			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_beaver.png");
-			break;
-		case 2:
-			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_bird_2.png");
-			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_bird_2.png");
-			break;
-		case 3:
-			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_bird.png");
-			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_bird.png");
-			break;
-		case 4:
-			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_bunny.png");
-			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_bunny.png");
-			break;
-		case 5:
-			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_elephant.png");
-			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_elephant.png");
-			break;
-		case 6:
-			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_giraffe.png");
-			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_giraffe.png");
-			break;
-		case 7:
-			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_hippo.png");
-			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_hippo.png");
-			break;
-		case 8:
-			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_monkey.png");
-			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_monkey.png");
-			break;
-		case 9:
-			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_panda.png");
-			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_panda.png");
-			break;
-		case 10:
-			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_penguin.png");
-			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_penguin.png");
-			break;
-		case 11:
-			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_pig.png");
-			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_pig.png");
-			break;
-		case 12:
-			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_snake.png");
-			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_snake.png");
-			break;
-		default:
-			game_player_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_beaver.png");
-			game_player_icon_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_player_icon_beaver.png");
-			break;
-		}*/
 		
 		game_hud_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameHudTextureAtlas, activity, "game_hud_background.png");
 		game_hud_powerup_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameHudTextureAtlas, activity, "game_hud_powerup_background.png");
@@ -336,12 +284,16 @@ public class ResourcesManager {
 		game_platform_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_platform.png");
 		
 		game_jump_landing_effect_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(animatedTextureAtlas, activity, "game_jump_landing_effect.png", 5, 1);
-		
-		//game_enemy_1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_1.png");
+
 		game_enemy_1_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(animatedTextureAtlas, activity, "game_enemy_1.png", 4, 1);
 		game_enemy_2_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(animatedTextureAtlas, activity, "game_enemy_2.png", 4, 1);
 		game_enemy_3_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(animatedTextureAtlas, activity, "game_enemy_3.png", 4, 1);
 		game_enemy_4_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(animatedTextureAtlas, activity, "game_enemy_4.png", 4, 1);
+		
+		game_enemy_1_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_1_sign.png");
+		game_enemy_2_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_2_sign.png");
+		game_enemy_3_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_3_sign.png");
+		game_enemy_4_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_enemy_4_sign.png");
 		
 		game_fruit_1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_fruit_1.png");
 		game_fruit_2_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "game_fruit_2.png");
