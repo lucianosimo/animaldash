@@ -321,6 +321,15 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					
 				}
 				
+				if (this.getY() < 0 && !gameStarted) {
+					this.getPlayerBody().setTransform(this.getX() / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+							this.getY() + 1500 / PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, 
+							this.getPlayerBody().getAngle());
+					this.setPosition(this.getX(), this.getY() + 1500);
+					this.setPlayerSensor(false);
+					this.setTexture(playersRegions.get(selectedPlayerIndex), selectedPlayerIndex);
+				}
+				
 				if (player.isPlayerInPowerUpMode() && !decreasingPowerUpBar) {
 					decreasingPowerUpBar = true;
 					
@@ -373,22 +382,26 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown() && !gameStarted) {
-					final float playerOriginalX = player.getX();
-					final float playerOriginalY = player.getY();
+					//final float playerOriginalX = player.getX();
+					//final float playerOriginalY = player.getY();
 					
 					selectedPlayerIndex--;
 					if (selectedPlayerIndex == -1) {
 						selectedPlayerIndex = 11;
 					}
+					
+					player.setPlayerSensor(true);
 
-					player.registerEntityModifier(
+					/*player.registerEntityModifier(
 						new MoveModifier(1f, playerOriginalX, playerOriginalY, playerOriginalX - 300, playerOriginalY) {
 							protected void onModifierFinished(IEntity pItem) {
 								player.setTexture(playersRegions.get(selectedPlayerIndex), selectedPlayerIndex);
 								player.registerEntityModifier(
 										new MoveModifier(1f, player.getX(), player.getY(), playerOriginalX, playerOriginalY));
 							};
-						});
+						});*/
+					
+					
 					
 					gamePlayerIcon.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
 					game_hud_small_player.setTextureRegion(playersRegions.get(selectedPlayerIndex));
@@ -401,22 +414,24 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.isActionDown() && !gameStarted) {
-					final float playerOriginalX = player.getX();
-					final float playerOriginalY = player.getY();
+					//final float playerOriginalX = player.getX();
+					//final float playerOriginalY = player.getY();
 					
 					selectedPlayerIndex++;
 					if (selectedPlayerIndex == 12) {
 						selectedPlayerIndex = 0;
 					}
+					
+					player.setPlayerSensor(true);
 
-					player.registerEntityModifier(
+					/*player.registerEntityModifier(
 						new MoveModifier(1f, playerOriginalX, playerOriginalY, playerOriginalX - 300, playerOriginalY) {
 							protected void onModifierFinished(IEntity pItem) {
 								player.setTexture(playersRegions.get(selectedPlayerIndex), selectedPlayerIndex);
 								player.registerEntityModifier(
 										new MoveModifier(1f, player.getX(), player.getY(), playerOriginalX, playerOriginalY));
 							};
-						});
+						});*/
 					
 					gamePlayerIcon.setTextureRegion(playersIconsRegions.get(selectedPlayerIndex));
 					game_hud_small_player.setTextureRegion(playersRegions.get(selectedPlayerIndex));

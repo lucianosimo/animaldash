@@ -310,12 +310,16 @@ public abstract class Player extends Sprite{
 		return isInPowerUpMode;
 	}
 	
+	public void setPlayerSensor(boolean isSensor) {
+		playerBody.getFixtureList().get(0).setSensor(isSensor);
+	}
+	
 	public void killPlayer() {
 		speedIncrement = -PLAYER_INITIAL_SPEED;
 		isAlive = false;
 		
 		playerBody.setLinearVelocity(new Vector2(playerBody.getLinearVelocity().x, PLAYER_JUMP_SPEED_Y));
-		playerBody.getFixtureList().get(0).setSensor(true);
+		setPlayerSensor(true);
 		
 		this.registerEntityModifier(new RotationModifier(PLAYER_KILL_JUMP_ROTATION_DURATION, savedRotation, savedRotation + 12 * ROTATION_DEGREES) {
 			@Override
